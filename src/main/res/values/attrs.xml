@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <declare-styleable name="Gallery">
+
+        <attr name="gallery_thumbnailBackgroundColor"
+              format="color" />
+
+        <attr name="gallery_thumbnailHeight"
+              format="dimension" />
+
+        <attr name="gallery_thumbnailWidth"
+              format="dimension" />
+
+        <attr name="gallery_maxThumbnails"
+              format="integer" />
+
+        <attr name="gallery_placeholders"
+              format="boolean" />
+
+    </declare-styleable>
+
+</resources>

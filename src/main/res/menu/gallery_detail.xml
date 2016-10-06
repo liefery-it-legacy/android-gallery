@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/gallery_menu_detail_delete"
+        android:icon="@drawable/gallery_ic_delete"
+        android:title="@string/gallery_delete"
+        app:showAsAction="always" />
+
+</menu>
