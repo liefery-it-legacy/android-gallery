@@ -145,6 +145,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         setClipToPadding( false );
         setOrientation( VERTICAL );
 
+        images.setVisibility( GONE );
         images.setAlignContent( ALIGN_CONTENT_FLEX_START );
         images.setAlignItems( ALIGN_ITEMS_FLEX_START );
         images.setFlexWrap( FLEX_WRAP_WRAP );
@@ -171,7 +172,10 @@ public class Gallery extends LinearLayout implements OnClickListener {
             null,
             null );
 
-        addView( images, WRAP_CONTENT, WRAP_CONTENT );
+        LayoutParams params = new LayoutParams( WRAP_CONTENT, WRAP_CONTENT );
+        params.bottomMargin = dpToPx( 16 );
+        addView( images, params );
+
         addView( button, WRAP_CONTENT, WRAP_CONTENT );
 
         int thumbnailBackgroundColor = styles.getColor(
@@ -243,13 +247,6 @@ public class Gallery extends LinearLayout implements OnClickListener {
         return thumbnailHeight;
     }
 
-    /**
-     * Amount of visible thumbnails (including empty placeholders)
-     */
-    public int getPlaceholderCount() {
-        return images.getChildCount();
-    }
-
     @Override
     public void onClick( View view ) {
         Intent intent = new Intent( getContext(), Action.class );
@@ -271,7 +268,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         return files;
     }
 
-    private ArrayList<String> getPaths() {
+    public ArrayList<String> getPaths() {
         int count = images.getChildCount();
         ArrayList<String> paths = new ArrayList<>();
 
@@ -298,6 +295,10 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     private void addPhoto( @NonNull File file, boolean animated ) {
+        if ( images.getChildCount() == 0 ) {
+            images.setVisibility( VISIBLE );
+        }
+
         Thumbnail thumbnail = addPlaceholder();
 
         if ( animated ) {
@@ -337,6 +338,10 @@ public class Gallery extends LinearLayout implements OnClickListener {
                                 @Override
                                 public void run() {
                                     images.removeView( finalSelection );
+
+                                    if ( images.getChildCount() == 0 ) {
+                                        images.setVisibility( GONE );
+                                    }
                                 }
                             } ).start();
 
