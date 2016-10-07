@@ -87,7 +87,7 @@ class Thumbnail extends FrameLayout {
 
     @Nullable
     public File getFile() {
-        return (File) image.getTag();
+        return (File) getTag();
     }
 
     public ImageView getImageView() {

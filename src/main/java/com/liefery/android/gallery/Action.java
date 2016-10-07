@@ -9,16 +9,9 @@ import pl.aprilapps.easyphotopicker.EasyImage.ImageSource;
 
 import java.io.File;
 
+import static com.liefery.android.gallery.Gallery.*;
+
 public class Action extends Activity implements EasyImage.Callbacks {
-    public static final String ACTION_IMAGE_CAPTURE = Action.class
-                    .getCanonicalName() + ".image_capture";
-
-    public static final int EVENT_SUCCESS = 0;
-
-    public static final int EVENT_CANCEL = 1;
-
-    public static final int EVENT_ERROR = 2;
-
     @Override
     protected void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
@@ -57,11 +50,5 @@ public class Action extends Activity implements EasyImage.Callbacks {
     public void onCanceled( ImageSource source, int type ) {
         sendBroadcast( createIntent( EVENT_CANCEL ) );
         finish();
-    }
-
-    private Intent createIntent( int event ) {
-        return new Intent().setAction( ACTION_IMAGE_CAPTURE ).putExtra(
-            "event",
-            event );
     }
 }

@@ -18,6 +18,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -28,12 +29,25 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.google.android.flexbox.FlexboxLayout.ALIGN_CONTENT_FLEX_START;
-import static com.google.android.flexbox.FlexboxLayout.ALIGN_ITEMS_FLEX_START;
-import static com.google.android.flexbox.FlexboxLayout.FLEX_WRAP_WRAP;
-import static com.liefery.android.gallery.Action.*;
+import static com.google.android.flexbox.FlexboxLayout.*;
 
 public class Gallery extends LinearLayout implements OnClickListener {
+    private static final String TAG = Gallery.class.getCanonicalName();
+
+    public static final String ACTION = TAG + ".action";
+
+    public static final int EVENT_SUCCESS = 0;
+
+    public static final int EVENT_CANCEL = 1;
+
+    public static final int EVENT_ERROR = 2;
+
+    public static final int EVENT_DELETE = 3;
+
+    public static Intent createIntent( int event ) {
+        return new Intent().setAction( ACTION ).putExtra( "event", event );
+    }
+
     private static int dpToPx( int dp ) {
         return (int) ( dp * Resources.getSystem().getDisplayMetrics().density );
     }
@@ -41,21 +55,28 @@ public class Gallery extends LinearLayout implements OnClickListener {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive( Context context, Intent intent ) {
-            context.unregisterReceiver( receiver );
-
             int event = intent.getIntExtra( "event", -1 );
+
+            String path;
+            File file;
 
             switch ( event ) {
                 case EVENT_SUCCESS:
-                    String path = intent.getStringExtra( "file" );
-                    File file = new File( path );
+                    path = intent.getStringExtra( "file" );
+                    file = new File( path );
                     addPhoto( file, true );
                 break;
                 case EVENT_CANCEL:
                 break;
                 case EVENT_ERROR:
                 break;
+                case EVENT_DELETE:
+                    path = intent.getStringExtra( "file" );
+                    file = new File( path );
+                    removePhoto( file );
+                break;
                 default:
+                    Log.w( TAG, "Received unknown event code " + event );
                 break;
             }
         }
@@ -189,6 +210,21 @@ public class Gallery extends LinearLayout implements OnClickListener {
         setAlwaysShowPlaceholders( placeholders );
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        IntentFilter filter = new IntentFilter( ACTION );
+        getContext().registerReceiver( receiver, filter );
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        getContext().unregisterReceiver( receiver );
+    }
+
     public void setThumbnailBackgroundColor( @ColorInt int color ) {
         this.thumbnailBackgroundColor = color;
 
@@ -250,9 +286,6 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     @Override
     public void onClick( View view ) {
-        IntentFilter filter = new IntentFilter( ACTION_IMAGE_CAPTURE );
-        getContext().registerReceiver( receiver, filter );
-
         Intent intent = new Intent( getContext(), Action.class );
         getContext().startActivity( intent );
     }
@@ -305,10 +338,11 @@ public class Gallery extends LinearLayout implements OnClickListener {
             if ( animated ) {
                 ViewCompat.setScaleX( thumbnail, 0 );
                 ViewCompat.setScaleY( thumbnail, 0 );
+                ViewCompat.setAlpha( thumbnail, 0 );
 
                 ViewCompat.animate( thumbnail ).scaleX( 1 ).scaleY( 1 )
-                                .setStartDelay( 250 ).setDuration( 350 )
-                                .start();
+                                .alpha( 1 ).setStartDelay( 250 )
+                                .setDuration( 350 ).start();
             }
 
             thumbnail.load( file );
@@ -316,6 +350,43 @@ public class Gallery extends LinearLayout implements OnClickListener {
             return true;
         } else {
             return false;
+        }
+    }
+
+    private boolean removePhoto( @NonNull File file ) {
+        ArrayList<Thumbnail> thumbnails = getThumbnails();
+        Thumbnail selection = null;
+
+        for ( Thumbnail thumbnail : thumbnails ) {
+            File thumbnailFile = thumbnail.getFile();
+
+            if ( thumbnailFile != null && thumbnailFile.equals( file ) ) {
+                selection = thumbnail;
+                break;
+            }
+        }
+
+        if ( selection == null ) {
+            Log.w( TAG, "Deleted file is not present in gallery" );
+            return false;
+        } else {
+            if ( alwaysShowPlaceholders() ) {
+                selection.clear();
+            } else {
+                Thumbnail finalSelection = selection;
+
+                ViewCompat.animate( selection ).scaleX( 0 ).scaleY( 0 )
+                                .alpha( 0 ).setStartDelay( 250 )
+                                .setDuration( 250 )
+                                .withEndAction( new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        images.removeView( finalSelection );
+                                    }
+                                } ).start();
+            }
+
+            return true;
         }
     }
 

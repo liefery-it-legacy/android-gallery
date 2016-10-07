@@ -1,5 +1,6 @@
 package com.liefery.android.gallery;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -55,6 +56,11 @@ public class Detail extends AppCompatActivity implements Callback {
                     getClass().getCanonicalName(),
                     "File could not be delete: " + file.getAbsolutePath() );
             }
+
+            Intent intent = Gallery.createIntent( Gallery.EVENT_DELETE )
+                            .putExtra( "file", file.getAbsolutePath() );
+            sendBroadcast( intent );
+
             finish();
             return true;
         }
