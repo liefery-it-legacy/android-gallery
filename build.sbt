@@ -10,7 +10,8 @@ lazy val gallery = project.in( file( "." ) )
             "com.github.jkwiecien" % "EasyImage" % "1.3.1" ::
             "com.github.square.picasso" % "picasso" % "eac9b2b330" ::
             Nil,
-        name := "gallery"
+        name := "gallery",
+        publishArtifact in ( Compile, packageDoc ) := false
     )
 
 lazy val sample = project
