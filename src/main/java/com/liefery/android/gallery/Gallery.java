@@ -9,10 +9,10 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewCompat;
@@ -87,10 +87,6 @@ public class Gallery extends LinearLayout implements OnClickListener {
     private int thumbnailWidth;
 
     private int thumbnailHeight;
-
-    private Integer maxThumbnails;
-
-    private boolean placeholders;
 
     private FlexboxLayout images = new FlexboxLayout( getContext() );
 
@@ -194,20 +190,6 @@ public class Gallery extends LinearLayout implements OnClickListener {
             R.styleable.Gallery_gallery_thumbnailHeight,
             thumbnailDefaultSize );
         setThumbnailHeight( thumbnailHeight );
-
-        Integer maxThumbnails = null;
-        int maxThumbnailValue = styles.getInt(
-            R.styleable.Gallery_gallery_maxThumbnails,
-            -1 );
-        if ( maxThumbnailValue != -1 ) {
-            maxThumbnails = maxThumbnailValue;
-        }
-        setMaxThumbnails( maxThumbnails );
-
-        boolean placeholders = styles.getBoolean(
-            R.styleable.Gallery_gallery_placeholders,
-            false );
-        setAlwaysShowPlaceholders( placeholders );
     }
 
     @Override
@@ -261,22 +243,6 @@ public class Gallery extends LinearLayout implements OnClickListener {
         return thumbnailHeight;
     }
 
-    public void setMaxThumbnails( @Nullable Integer count ) {
-        this.maxThumbnails = count;
-    }
-
-    public Integer getMaxThumbnails() {
-        return maxThumbnails;
-    }
-
-    public void setAlwaysShowPlaceholders( boolean show ) {
-        this.placeholders = show;
-    }
-
-    public boolean alwaysShowPlaceholders() {
-        return placeholders;
-    }
-
     /**
      * Amount of visible thumbnails (including empty placeholders)
      */
@@ -305,6 +271,21 @@ public class Gallery extends LinearLayout implements OnClickListener {
         return files;
     }
 
+    private ArrayList<String> getPaths() {
+        int count = images.getChildCount();
+        ArrayList<String> paths = new ArrayList<>();
+
+        for ( int i = 0; i < count; i++ ) {
+            File file = ( (Thumbnail) images.getChildAt( i ) ).getFile();
+
+            if ( file != null ) {
+                paths.add( file.getAbsolutePath() );
+            }
+        }
+
+        return paths;
+    }
+
     private ArrayList<Thumbnail> getThumbnails() {
         int count = images.getChildCount();
         ArrayList<Thumbnail> thumbnails = new ArrayList<>( count );
@@ -316,41 +297,19 @@ public class Gallery extends LinearLayout implements OnClickListener {
         return thumbnails;
     }
 
-    @Nullable
-    private Thumbnail getNextThumbnail() {
-        if ( getMaxThumbnails() == null ) {
-            return addPlaceholder();
-        } else {
-            for ( Thumbnail thumbnail : getThumbnails() ) {
-                if ( thumbnail.getFile() == null ) {
-                    return thumbnail;
-                }
-            }
+    private void addPhoto( @NonNull File file, boolean animated ) {
+        Thumbnail thumbnail = addPlaceholder();
 
-            return null;
+        if ( animated ) {
+            ViewCompat.setScaleX( thumbnail, 0 );
+            ViewCompat.setScaleY( thumbnail, 0 );
+            ViewCompat.setAlpha( thumbnail, 0 );
+
+            ViewCompat.animate( thumbnail ).scaleX( 1 ).scaleY( 1 ).alpha( 1 )
+                            .setStartDelay( 250 ).setDuration( 350 ).start();
         }
-    }
 
-    private boolean addPhoto( @NonNull File file, boolean animated ) {
-        Thumbnail thumbnail = getNextThumbnail();
-
-        if ( thumbnail != null ) {
-            if ( animated ) {
-                ViewCompat.setScaleX( thumbnail, 0 );
-                ViewCompat.setScaleY( thumbnail, 0 );
-                ViewCompat.setAlpha( thumbnail, 0 );
-
-                ViewCompat.animate( thumbnail ).scaleX( 1 ).scaleY( 1 )
-                                .alpha( 1 ).setStartDelay( 250 )
-                                .setDuration( 350 ).start();
-            }
-
-            thumbnail.load( file );
-
-            return true;
-        } else {
-            return false;
-        }
+        thumbnail.load( file );
     }
 
     private boolean removePhoto( @NonNull File file ) {
@@ -370,21 +329,16 @@ public class Gallery extends LinearLayout implements OnClickListener {
             Log.w( TAG, "Deleted file is not present in gallery" );
             return false;
         } else {
-            if ( alwaysShowPlaceholders() ) {
-                selection.clear();
-            } else {
-                Thumbnail finalSelection = selection;
+            Thumbnail finalSelection = selection;
 
-                ViewCompat.animate( selection ).scaleX( 0 ).scaleY( 0 )
-                                .alpha( 0 ).setStartDelay( 250 )
-                                .setDuration( 250 )
-                                .withEndAction( new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        images.removeView( finalSelection );
-                                    }
-                                } ).start();
-            }
+            ViewCompat.animate( selection ).scaleX( 0 ).scaleY( 0 ).alpha( 0 )
+                            .setStartDelay( 250 ).setDuration( 250 )
+                            .withEndAction( new Runnable() {
+                                @Override
+                                public void run() {
+                                    images.removeView( finalSelection );
+                                }
+                            } ).start();
 
             return true;
         }
@@ -401,11 +355,32 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     @Override
     protected Parcelable onSaveInstanceState() {
-        return super.onSaveInstanceState();
+        Bundle bundle = new Bundle( 7 );
+        bundle.putParcelable( "state", super.onSaveInstanceState() );
+        bundle.putInt(
+            "thumbnail-background-color",
+            getThumbnailBackgroundColor() );
+        bundle.putInt( "thumbnail-width", getThumbnailWidth() );
+        bundle.putInt( "thumbnail-height", getThumbnailHeight() );
+        bundle.putStringArrayList( "files", getPaths() );
+        return bundle;
     }
 
     @Override
     protected void onRestoreInstanceState( Parcelable state ) {
-        super.onRestoreInstanceState( state );
+        if ( state instanceof Bundle ) {
+            Bundle bundle = (Bundle) state;
+            super.onRestoreInstanceState( bundle.getParcelable( "state" ) );
+            setThumbnailBackgroundColor( bundle
+                            .getInt( "thumbnail-background-color" ) );
+            setThumbnailWidth( bundle.getInt( "thumbnail-width" ) );
+            setThumbnailHeight( bundle.getInt( "thumbnail-height" ) );
+            ArrayList<String> files = bundle.getStringArrayList( "files" );
+            for ( String file : files ) {
+                addPhoto( new File( file ), false );
+            }
+        } else {
+            super.onRestoreInstanceState( state );
+        }
     }
 }

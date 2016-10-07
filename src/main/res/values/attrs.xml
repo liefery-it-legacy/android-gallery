@@ -13,12 +13,6 @@
         <attr name="gallery_thumbnailWidth"
               format="dimension" />
 
-        <attr name="gallery_maxThumbnails"
-              format="integer" />
-
-        <attr name="gallery_placeholders"
-              format="boolean" />
-
     </declare-styleable>
 
 </resources>

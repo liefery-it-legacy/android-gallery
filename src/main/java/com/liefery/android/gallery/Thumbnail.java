@@ -65,6 +65,7 @@ class Thumbnail extends FrameLayout {
 
         ViewGroup.LayoutParams params = getLayoutParams();
 
+        setClickable( true );
         setOnClickListener( new OnClickListener() {
             @Override
             public void onClick( View view ) {
@@ -82,6 +83,8 @@ class Thumbnail extends FrameLayout {
 
     public void clear() {
         setTag( null );
+        setClickable( false );
+        setOnClickListener( null );
         image.setImageDrawable( null );
     }
 
