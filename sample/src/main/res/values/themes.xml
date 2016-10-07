@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <style name="AppTheme"
+           parent="AppTheme.Base" />
+
+    <style name="AppTheme.Base"
+           parent="Theme.AppCompat">
+
+        <item name="colorPrimary">#2196f3</item>
+        <item name="colorPrimaryDark">#ffab40</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
+    </style>
+
+</resources>

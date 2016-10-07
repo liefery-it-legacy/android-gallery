@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.liefery.android.gallery.sample">
 
-    <application>
+    <application android:theme="@style/AppTheme">
 
         <activity android:name=".Activity">
 
