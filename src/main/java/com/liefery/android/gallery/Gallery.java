@@ -15,6 +15,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.util.AttributeSet;
@@ -164,6 +165,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
             getContext().getResources(),
             R.drawable.gallery_ic_add_photo,
             getContext().getTheme() );
+        DrawableCompat.setTint( icon, button.getCurrentTextColor() );
         button.setCompoundDrawablePadding( dpToPx( 8 ) );
         TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
             button,

@@ -1,5 +1,3 @@
-import sbt.Keys._
-
 lazy val gallery = project.in( file( "." ) )
     .enablePlugins( AndroidLib )
     .settings( Settings.common )
@@ -19,7 +17,7 @@ lazy val sample = project
     .enablePlugins( AndroidApp )
     .settings( Settings.common )
     .settings(
-        organization := organization.value + ".sample",
+        organization := organization.value + ".gallery.sample",
         run <<= run in Android
     )
     .dependsOn( gallery )

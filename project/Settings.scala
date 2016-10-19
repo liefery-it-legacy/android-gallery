@@ -10,7 +10,7 @@ object Settings {
             "-target" :: "1.7" ::
             Nil,
         minSdkVersion := "14",
-        organization := "com.liefery.android.gallery",
+        organization := "com.liefery.android",
         platformTarget := "android-24",
         resolvers += "jitpack" at "https://jitpack.io",
         scalaVersion := "2.11.8"
