@@ -1,7 +1,8 @@
 import sbt.Keys._
 
 lazy val gallery = project.in( file( "." ) )
-    .settings( androidBuildAar ++ Settings.common )
+    .enablePlugins( AndroidLib )
+    .settings( Settings.common )
     .settings(
         javacOptions ++=
             "-source" :: "1.7" ::
@@ -19,9 +20,10 @@ lazy val gallery = project.in( file( "." ) )
     )
 
 lazy val sample = project
-    .androidBuildWith( gallery )
+    .enablePlugins( AndroidApp )
     .settings( Settings.common )
     .settings(
         organization := organization.value + ".sample",
         run <<= run in Android
     )
+    .dependsOn( gallery )
