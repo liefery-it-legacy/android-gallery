@@ -60,7 +60,7 @@ class Thumbnail extends FrameLayout {
         addView( image, MATCH_PARENT, MATCH_PARENT );
     }
 
-    public void load( @NonNull File file ) {
+    public void load( @NonNull final File file ) {
         setTag( file );
 
         ViewGroup.LayoutParams params = getLayoutParams();

@@ -330,7 +330,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
             Log.w( TAG, "Deleted file is not present in gallery" );
             return false;
         } else {
-            Thumbnail finalSelection = selection;
+            final Thumbnail finalSelection = selection;
 
             ViewCompat.animate( selection ).scaleX( 0 ).scaleY( 0 ).alpha( 0 )
                             .setStartDelay( 250 ).setDuration( 250 )
