@@ -18,6 +18,6 @@ lazy val sample = project
     .settings( Settings.common )
     .settings(
         organization := organization.value + ".gallery.sample",
-        run <<= run in Android
+        run := ( run in Android ).evaluated
     )
     .dependsOn( gallery )
