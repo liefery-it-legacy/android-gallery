@@ -199,7 +199,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     @Override
-    protected void onAttachedToWindow() {
+    public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
         IntentFilter filter = new IntentFilter( ACTION );
@@ -207,7 +207,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     @Override
-    protected void onDetachedFromWindow() {
+    public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
         getContext().unregisterReceiver( receiver );
@@ -361,7 +361,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     @Override
-    protected Parcelable onSaveInstanceState() {
+    public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle( 7 );
         bundle.putParcelable( "state", super.onSaveInstanceState() );
         bundle.putInt(
@@ -374,7 +374,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     @Override
-    protected void onRestoreInstanceState( Parcelable state ) {
+    public void onRestoreInstanceState( Parcelable state ) {
         if ( state instanceof Bundle ) {
             Bundle bundle = (Bundle) state;
             super.onRestoreInstanceState( bundle.getParcelable( "state" ) );

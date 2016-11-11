@@ -22,7 +22,7 @@ public class Detail extends AppCompatActivity implements Callback {
     private File file;
 
     @Override
-    protected void onCreate( @Nullable Bundle state ) {
+    public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
 
         setContentView( R.layout.gallery_detail );

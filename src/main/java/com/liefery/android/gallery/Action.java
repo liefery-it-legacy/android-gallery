@@ -13,7 +13,7 @@ import static com.liefery.android.gallery.Gallery.*;
 
 public class Action extends Activity implements EasyImage.Callbacks {
     @Override
-    protected void onCreate( @Nullable Bundle state ) {
+    public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
 
         if ( state == null ) {
@@ -22,7 +22,7 @@ public class Action extends Activity implements EasyImage.Callbacks {
     }
 
     @Override
-    protected void onActivityResult( int request, int result, Intent data ) {
+    public void onActivityResult( int request, int result, Intent data ) {
         super.onActivityResult( request, result, data );
 
         EasyImage.handleActivityResult( request, result, data, this, this );
