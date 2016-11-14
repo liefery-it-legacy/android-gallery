@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -92,6 +93,8 @@ public class Gallery extends LinearLayout implements OnClickListener {
     private FlexboxLayout images = new FlexboxLayout( getContext() );
 
     private Button button = new Button( getContext() );
+
+    private OnTakePhotoListener listener;
 
     public Gallery( Context context ) {
         super( context );
@@ -251,6 +254,10 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     @Override
     public void onClick( View view ) {
+        if ( listener != null && !listener.onTakePhoto() ) {
+            return;
+        }
+
         Intent intent = new Intent( getContext(), Action.class );
         getContext().startActivity( intent );
     }
@@ -283,6 +290,15 @@ public class Gallery extends LinearLayout implements OnClickListener {
         }
 
         return paths;
+    }
+
+    @Nullable
+    public OnTakePhotoListener getOnTakePhotoListener() {
+        return listener;
+    }
+
+    public void setOnTakePhotoListener( @Nullable OnTakePhotoListener listener ) {
+        this.listener = listener;
     }
 
     private ArrayList<Thumbnail> getThumbnails() {
@@ -389,5 +405,9 @@ public class Gallery extends LinearLayout implements OnClickListener {
         } else {
             super.onRestoreInstanceState( state );
         }
+    }
+
+    public interface OnTakePhotoListener {
+        boolean onTakePhoto();
     }
 }
