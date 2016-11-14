@@ -16,16 +16,22 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 import java.io.File;
 
+import static com.liefery.android.gallery.Gallery.EVENT_DELETE;
+
 public class Detail extends AppCompatActivity implements Callback {
     private ImageView image;
 
     private File file;
+
+    private String action;
 
     @Override
     public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
 
         setContentView( R.layout.gallery_detail );
+
+        action = getIntent().getStringExtra( "action" );
 
         String path = getIntent().getStringExtra( "file" );
         file = new File( path );
@@ -57,7 +63,7 @@ public class Detail extends AppCompatActivity implements Callback {
                     "File could not be delete: " + file.getAbsolutePath() );
             }
 
-            Intent intent = Gallery.createIntent( Gallery.EVENT_DELETE )
+            Intent intent = Gallery.createIntent( action, EVENT_DELETE )
                             .putExtra( "file", file.getAbsolutePath() );
             sendBroadcast( intent );
 

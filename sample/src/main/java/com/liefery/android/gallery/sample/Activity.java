@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.liefery.android.gallery.Gallery;
@@ -18,16 +19,27 @@ import java.util.List;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
 public class Activity extends android.app.Activity implements OnTakePhotoListener {
+    public static final String TAG = Activity.class.getCanonicalName();
+
     private Gallery gallery;
 
     @Override
     public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
 
+        Log.d( TAG, "Creating host" );
+
         setContentView( R.layout.main );
 
         gallery = (Gallery) findViewById( R.id.gallery1 );
         gallery.setOnTakePhotoListener( this );
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d( TAG, "Destroying host" );
     }
 
     @Override

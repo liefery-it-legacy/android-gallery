@@ -36,8 +36,6 @@ import static com.google.android.flexbox.FlexboxLayout.*;
 public class Gallery extends LinearLayout implements OnClickListener {
     private static final String TAG = Gallery.class.getCanonicalName();
 
-    public static final String ACTION = TAG + ".action";
-
     public static final int EVENT_SUCCESS = 0;
 
     public static final int EVENT_CANCEL = 1;
@@ -46,13 +44,15 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     public static final int EVENT_DELETE = 3;
 
-    public static Intent createIntent( int event ) {
-        return new Intent().setAction( ACTION ).putExtra( "event", event );
+    public static Intent createIntent( String action, int event ) {
+        return new Intent().setAction( action ).putExtra( "event", event );
     }
 
     private static int dpToPx( int dp ) {
         return (int) ( dp * Resources.getSystem().getDisplayMetrics().density );
     }
+
+    private String action = TAG + ".action-" + getId();
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -205,7 +205,8 @@ public class Gallery extends LinearLayout implements OnClickListener {
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        IntentFilter filter = new IntentFilter( ACTION );
+        Log.d( TAG, "Registering receiver" );
+        IntentFilter filter = new IntentFilter( action );
         getContext().registerReceiver( receiver, filter );
     }
 
@@ -213,6 +214,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
+        Log.d( TAG, "Unregistering receiver" );
         getContext().unregisterReceiver( receiver );
     }
 
@@ -263,6 +265,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         }
 
         Intent intent = new Intent( getContext(), Action.class );
+        intent.putExtra( "action", action );
         getContext().startActivity( intent );
     }
 
@@ -373,6 +376,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     private Thumbnail addPlaceholder() {
         Thumbnail thumbnail = new Thumbnail( getContext() );
+        thumbnail.setAction( action );
         thumbnail.setBackgroundColor( getThumbnailBackgroundColor() );
 
         images.addView( thumbnail, getThumbnailWidth(), getThumbnailHeight() );
@@ -382,7 +386,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     @Override
     public Parcelable onSaveInstanceState() {
-        Bundle bundle = new Bundle( 7 );
+        Bundle bundle = new Bundle( 5 );
         bundle.putParcelable( "state", super.onSaveInstanceState() );
         bundle.putInt(
             "thumbnail-background-color",

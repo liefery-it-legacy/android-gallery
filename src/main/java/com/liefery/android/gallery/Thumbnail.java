@@ -22,6 +22,8 @@ import java.io.File;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 class Thumbnail extends FrameLayout {
+    private String action;
+
     public Thumbnail( Context context ) {
         super( context );
         initialize();
@@ -60,6 +62,10 @@ class Thumbnail extends FrameLayout {
         addView( image, MATCH_PARENT, MATCH_PARENT );
     }
 
+    void setAction( String action ) {
+        this.action = action;
+    }
+
     public void load( @NonNull final File file ) {
         setTag( file );
 
@@ -70,7 +76,9 @@ class Thumbnail extends FrameLayout {
             @Override
             public void onClick( View view ) {
                 Intent intent = new Intent( getContext(), Detail.class )
-                                .putExtra( "file", file.getAbsolutePath() );
+                                .putExtra( "action", action ).putExtra(
+                                    "file",
+                                    file.getAbsolutePath() );
 
                 getContext().startActivity( intent );
             }
