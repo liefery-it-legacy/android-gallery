@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import com.liefery.android.gallery.Gallery;
+import com.liefery.android.gallery.Gallery.OnTakePhotoListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,19 +16,15 @@ import java.util.List;
 
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
-public class Activity extends android.app.Activity {
+public class Activity extends android.app.Activity implements OnTakePhotoListener {
     @Override
-    protected void onCreate( @Nullable Bundle state ) {
+    public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
 
         setContentView( R.layout.main );
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        checkPermissions();
+        Gallery gallery = (Gallery) findViewById( R.id.gallery1 );
+        gallery.setOnTakePhotoListener( this );
     }
 
     @Override
@@ -44,7 +43,12 @@ public class Activity extends android.app.Activity {
         }
     }
 
-    private void checkPermissions() {
+    @Override
+    public boolean onTakePhoto() {
+        return checkPermissions();
+    }
+
+    private boolean checkPermissions() {
         ArrayList<String> permissions = new ArrayList<>();
 
         if ( ContextCompat.checkSelfPermission(
@@ -64,6 +68,10 @@ public class Activity extends android.app.Activity {
                 this,
                 permissions.toArray( new String[permissions.size()] ),
                 420 );
+
+            return false;
+        } else {
+            return true;
         }
     }
 }
