@@ -254,6 +254,10 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     @Override
     public void onClick( View view ) {
+        takePhoto();
+    }
+
+    public void takePhoto() {
         if ( listener != null && !listener.onTakePhoto() ) {
             return;
         }
