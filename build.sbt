@@ -3,7 +3,7 @@ lazy val gallery = project.in( file( "." ) )
     .settings( Settings.common )
     .settings(
         libraryDependencies ++=
-            "com.android.support" % "appcompat-v7" % "24.2.1" ::
+            "com.android.support" % "appcompat-v7" % "25.0.1" ::
             "com.github.chrisbanes" % "PhotoView" % "1.3.0" ::
             "com.github.google" % "flexbox-layout" % "0.2.3" ::
             "com.github.jkwiecien" % "EasyImage" % "1.3.1" ::
