@@ -12,13 +12,9 @@ import java.io.File;
 import static com.liefery.android.gallery.Gallery.*;
 
 public class Action extends Activity implements EasyImage.Callbacks {
-    private String action;
-
     @Override
     public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
-
-        action = getIntent().getStringExtra( "action" );
 
         if ( state == null ) {
             EasyImage.openCamera( this, 0 );
@@ -34,10 +30,9 @@ public class Action extends Activity implements EasyImage.Callbacks {
 
     @Override
     public void onImagePicked( File file, ImageSource source, int type ) {
-        Intent intent = createIntent( action, EVENT_SUCCESS ).putExtra(
+        Intent intent = createIntent( EVENT_SUCCESS ).putExtra(
             "file",
             file.getAbsolutePath() );
-        // sendBroadcast( intent );
         setResult( RESULT_OK, intent );
         finish();
     }
@@ -47,16 +42,14 @@ public class Action extends Activity implements EasyImage.Callbacks {
         Exception exception,
         ImageSource source,
         int type ) {
-        // endBroadcast( createIntent( action, EVENT_ERROR ) );
-        Intent intent = createIntent( action, EVENT_ERROR );
+        Intent intent = createIntent( EVENT_ERROR );
         setResult( RESULT_OK, intent );
         finish();
     }
 
     @Override
     public void onCanceled( ImageSource source, int type ) {
-        // sendBroadcast( createIntent( action, EVENT_CANCEL ) );
-        Intent intent = createIntent( action, EVENT_CANCEL );
+        Intent intent = createIntent( EVENT_CANCEL );
         setResult( RESULT_OK, intent );
         finish();
     }

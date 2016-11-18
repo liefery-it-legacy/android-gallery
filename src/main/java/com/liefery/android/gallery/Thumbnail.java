@@ -22,8 +22,6 @@ import java.io.File;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 class Thumbnail extends FrameLayout {
-    private String action;
-
     public Thumbnail( Context context ) {
         super( context );
         initialize();
@@ -62,27 +60,13 @@ class Thumbnail extends FrameLayout {
         addView( image, MATCH_PARENT, MATCH_PARENT );
     }
 
-    void setAction( String action ) {
-        this.action = action;
-    }
-
-    public void load( @NonNull final File file ) {
+    public void load( @NonNull final File file, OnClickListener onClick ) {
         setTag( file );
 
         ViewGroup.LayoutParams params = getLayoutParams();
 
         setClickable( true );
-        setOnClickListener( new OnClickListener() {
-            @Override
-            public void onClick( View view ) {
-                Intent intent = new Intent( getContext(), Detail.class )
-                                .putExtra( "action", action ).putExtra(
-                                    "file",
-                                    file.getAbsolutePath() );
-
-                getContext().startActivity( intent );
-            }
-        } );
+        setOnClickListener( onClick );
 
         Picasso.with( getContext() ).load( file )
                         .resize( params.width, params.height ).centerCrop()

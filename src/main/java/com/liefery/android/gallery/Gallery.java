@@ -37,7 +37,9 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.google.android.flexbox.FlexboxLayout.*;
 
 public class Gallery extends LinearLayout implements OnClickListener {
-    private static final String TAG = Gallery.class.getCanonicalName();
+    public static final String TAG = Gallery.class.getCanonicalName();
+
+    public static final String ACTION = TAG + ".action";
 
     public static final int EVENT_SUCCESS = 0;
 
@@ -47,45 +49,23 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     public static final int EVENT_DELETE = 3;
 
-    public static Intent createIntent( String action, int event ) {
-        return new Intent().setAction( action ).putExtra( "event", event );
+    @NonNull
+    public static Intent createIntent( int event ) {
+        return new Intent().setAction( ACTION ).putExtra( "event", event );
     }
 
     private static int dpToPx( int dp ) {
         return (int) ( dp * Resources.getSystem().getDisplayMetrics().density );
     }
 
-    private String action = TAG + ".action-" + getId();
-
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive( Context context, Intent intent ) {
-            int event = intent.getIntExtra( "event", -1 );
-
-            String path;
-            File file;
-
-            switch ( event ) {
-                case EVENT_SUCCESS:
-                    path = intent.getStringExtra( "file" );
-                    file = new File( path );
-                    addPhoto( file, true );
-                break;
-                case EVENT_CANCEL:
-                break;
-                case EVENT_ERROR:
-                break;
-                case EVENT_DELETE:
-                    path = intent.getStringExtra( "file" );
-                    file = new File( path );
-                    removePhoto( file );
-                break;
-                default:
-                    Log.w( TAG, "Received unknown event code " + event );
-                break;
-            }
+    @NonNull
+    private static FragmentManager getFragmentManager( Context context ) {
+        if ( context instanceof Activity ) {
+            return ( (Activity) context ).getFragmentManager();
+        } else {
+            throw new IllegalStateException( "Not a valid host" );
         }
-    };
+    }
 
     private int thumbnailBackgroundColor;
 
@@ -148,6 +128,8 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     private void initialize( @NonNull TypedArray styles ) {
+        Context context = getContext();
+
         setClipChildren( false );
         setClipToPadding( false );
         setOrientation( VERTICAL );
@@ -168,9 +150,9 @@ public class Gallery extends LinearLayout implements OnClickListener {
         button.setText( R.string.gallery_add_photo );
         button.setOnClickListener( this );
         VectorDrawableCompat icon = VectorDrawableCompat.create(
-            getContext().getResources(),
+            context.getResources(),
             R.drawable.gallery_ic_add_photo,
-            getContext().getTheme() );
+            context.getTheme() );
         DrawableCompat.setTint( icon, button.getCurrentTextColor() );
         button.setCompoundDrawablePadding( dpToPx( 8 ) );
         TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -203,29 +185,12 @@ public class Gallery extends LinearLayout implements OnClickListener {
             thumbnailDefaultSize );
         setThumbnailHeight( thumbnailHeight );
 
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getFragmentManager( context );
         Auxilery auxilery = (Auxilery) fm.findFragmentByTag( Auxilery.TAG );
 
         if ( auxilery != null ) {
             auxilery.setGallery( this );
         }
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-
-        //        Log.d( TAG, "Registering receiver" );
-        //        IntentFilter filter = new IntentFilter( action );
-        //        getContext().registerReceiver( receiver, filter );
-    }
-
-    @Override
-    public void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
-        //        Log.d( TAG, "Unregistering receiver" );
-        //        getContext().unregisterReceiver( receiver );
     }
 
     public void setThumbnailBackgroundColor( @ColorInt int color ) {
@@ -274,26 +239,15 @@ public class Gallery extends LinearLayout implements OnClickListener {
             return;
         }
 
-        FragmentManager fm = getFragmentManager();
+        Context context = getContext();
+        FragmentManager fm = getFragmentManager( context );
 
         Auxilery auxiliary = Auxilery.newInstance( this );
         fm.beginTransaction().add( auxiliary, Auxilery.TAG ).commit();
         fm.executePendingTransactions();
 
-        Intent intent = new Intent( getContext(), Action.class );
-        intent.putExtra( "action", action );
+        Intent intent = new Intent( context, Action.class );
         auxiliary.startActivityForResult( intent, 421 );
-    }
-
-    @NonNull
-    private FragmentManager getFragmentManager() {
-        Context context = getContext();
-
-        if ( context instanceof Activity ) {
-            return ( (Activity) context ).getFragmentManager();
-        } else {
-            throw new IllegalStateException( "Not a valid host" );
-        }
     }
 
     @NonNull
@@ -365,7 +319,26 @@ public class Gallery extends LinearLayout implements OnClickListener {
                             .setStartDelay( 250 ).setDuration( 350 ).start();
         }
 
-        thumbnail.load( file );
+        final Context context = getContext();
+        final String path = file.getAbsolutePath();
+
+        OnClickListener onClick = new OnClickListener() {
+            @Override
+            public void onClick( View view ) {
+                FragmentManager fm = getFragmentManager( context );
+
+                Auxilery auxiliary = Auxilery.newInstance( Gallery.this );
+                fm.beginTransaction().add( auxiliary, Auxilery.TAG ).commit();
+                fm.executePendingTransactions();
+
+                Intent intent = new Intent( context, Detail.class ).putExtra(
+                    "file",
+                    path );
+                auxiliary.startActivityForResult( intent, 421 );
+            }
+        };
+
+        thumbnail.load( file, onClick );
     }
 
     private boolean removePhoto( @NonNull File file ) {
@@ -407,7 +380,6 @@ public class Gallery extends LinearLayout implements OnClickListener {
     @NonNull
     private Thumbnail addPlaceholder() {
         Thumbnail thumbnail = new Thumbnail( getContext() );
-        thumbnail.setAction( action );
         thumbnail.setBackgroundColor( getThumbnailBackgroundColor() );
 
         images.addView( thumbnail, getThumbnailWidth(), getThumbnailHeight() );
@@ -469,9 +441,30 @@ public class Gallery extends LinearLayout implements OnClickListener {
         public void onActivityResult( int request, int result, Intent data ) {
             super.onActivityResult( request, result, data );
 
-            String path = data.getStringExtra( "file" );
-            File file = new File( path );
-            gallery.addPhoto( file, true );
+            int event = data.getIntExtra( "event", -1 );
+
+            String path;
+            File file;
+
+            switch ( event ) {
+                case EVENT_SUCCESS:
+                    path = data.getStringExtra( "file" );
+                    file = new File( path );
+                    gallery.addPhoto( file, true );
+                break;
+                case EVENT_CANCEL:
+                break;
+                case EVENT_ERROR:
+                break;
+                case EVENT_DELETE:
+                    path = data.getStringExtra( "file" );
+                    file = new File( path );
+                    gallery.removePhoto( file );
+                break;
+                default:
+                    Log.w( TAG, "Received unknown event code " + event );
+                break;
+            }
         }
 
         @Override

@@ -23,15 +23,11 @@ public class Detail extends AppCompatActivity implements Callback {
 
     private File file;
 
-    private String action;
-
     @Override
     public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
 
         setContentView( R.layout.gallery_detail );
-
-        action = getIntent().getStringExtra( "action" );
 
         String path = getIntent().getStringExtra( "file" );
         file = new File( path );
@@ -63,10 +59,10 @@ public class Detail extends AppCompatActivity implements Callback {
                     "File could not be delete: " + file.getAbsolutePath() );
             }
 
-            Intent intent = Gallery.createIntent( action, EVENT_DELETE )
-                            .putExtra( "file", file.getAbsolutePath() );
-            sendBroadcast( intent );
-
+            Intent intent = Gallery.createIntent( EVENT_DELETE ).putExtra(
+                "file",
+                this.file.getAbsolutePath() );
+            setResult( RESULT_OK, intent );
             finish();
             return true;
         }
