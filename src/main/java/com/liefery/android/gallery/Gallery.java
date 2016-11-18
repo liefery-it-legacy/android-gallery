@@ -269,6 +269,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         getContext().startActivity( intent );
     }
 
+    @NonNull
     public ArrayList<File> getImages() {
         int count = images.getChildCount();
         ArrayList<File> files = new ArrayList<>();
@@ -284,6 +285,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         return files;
     }
 
+    @NonNull
     public ArrayList<String> getPaths() {
         int count = images.getChildCount();
         ArrayList<String> paths = new ArrayList<>();
@@ -308,6 +310,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         this.listener = listener;
     }
 
+    @NonNull
     private ArrayList<Thumbnail> getThumbnails() {
         int count = images.getChildCount();
         ArrayList<Thumbnail> thumbnails = new ArrayList<>( count );
@@ -374,6 +377,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         }
     }
 
+    @NonNull
     private Thumbnail addPlaceholder() {
         Thumbnail thumbnail = new Thumbnail( getContext() );
         thumbnail.setAction( action );
