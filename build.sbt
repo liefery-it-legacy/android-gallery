@@ -5,12 +5,13 @@ lazy val gallery = project.in( file( "." ) )
         libraryDependencies ++=
             "com.android.support" % "appcompat-v7" % "25.0.1" ::
             "com.github.chrisbanes" % "PhotoView" % "1.3.1" ::
-            "com.github.google" % "flexbox-layout" % "0.2.3" ::
             "com.github.jkwiecien" % "EasyImage" % "1.3.1" ::
             "com.github.square.picasso" % "picasso" % "059993e3cc" ::
+            "com.google.android" % "flexbox" % "0.2.3" ::
             Nil,
         name := "gallery",
-        publishArtifact in ( Compile, packageDoc ) := false
+        publishArtifact in ( Compile, packageDoc ) := false,
+        resolvers += Resolver.jcenterRepo
     )
 
 lazy val sample = project
