@@ -1,6 +1,9 @@
 package com.liefery.android.gallery;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -199,23 +202,30 @@ public class Gallery extends LinearLayout implements OnClickListener {
             R.styleable.Gallery_gallery_thumbnailHeight,
             thumbnailDefaultSize );
         setThumbnailHeight( thumbnailHeight );
+
+        FragmentManager fm = getFragmentManager();
+        Auxilery auxilery = (Auxilery) fm.findFragmentByTag( Auxilery.TAG );
+
+        if ( auxilery != null ) {
+            auxilery.setGallery( this );
+        }
     }
 
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        Log.d( TAG, "Registering receiver" );
-        IntentFilter filter = new IntentFilter( action );
-        getContext().registerReceiver( receiver, filter );
+        //        Log.d( TAG, "Registering receiver" );
+        //        IntentFilter filter = new IntentFilter( action );
+        //        getContext().registerReceiver( receiver, filter );
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        Log.d( TAG, "Unregistering receiver" );
-        getContext().unregisterReceiver( receiver );
+        //        Log.d( TAG, "Unregistering receiver" );
+        //        getContext().unregisterReceiver( receiver );
     }
 
     public void setThumbnailBackgroundColor( @ColorInt int color ) {
@@ -264,9 +274,26 @@ public class Gallery extends LinearLayout implements OnClickListener {
             return;
         }
 
+        FragmentManager fm = getFragmentManager();
+
+        Auxilery auxiliary = Auxilery.newInstance( this );
+        fm.beginTransaction().add( auxiliary, Auxilery.TAG ).commit();
+        fm.executePendingTransactions();
+
         Intent intent = new Intent( getContext(), Action.class );
         intent.putExtra( "action", action );
-        getContext().startActivity( intent );
+        auxiliary.startActivityForResult( intent, 421 );
+    }
+
+    @NonNull
+    private FragmentManager getFragmentManager() {
+        Context context = getContext();
+
+        if ( context instanceof Activity ) {
+            return ( (Activity) context ).getFragmentManager();
+        } else {
+            throw new IllegalStateException( "Not a valid host" );
+        }
     }
 
     @NonNull
@@ -421,5 +448,37 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     public interface OnTakePhotoListener {
         boolean onTakePhoto();
+    }
+
+    public static class Auxilery extends Fragment {
+        public static final String TAG = Auxilery.class.getCanonicalName();
+
+        private Gallery gallery;
+
+        public static Auxilery newInstance( Gallery gallery ) {
+            Auxilery auxilery = new Auxilery();
+            auxilery.setGallery( gallery );
+            return auxilery;
+        }
+
+        public void setGallery( Gallery gallery ) {
+            this.gallery = gallery;
+        }
+
+        @Override
+        public void onActivityResult( int request, int result, Intent data ) {
+            super.onActivityResult( request, result, data );
+
+            String path = data.getStringExtra( "file" );
+            File file = new File( path );
+            gallery.addPhoto( file, true );
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+
+            gallery = null;
+        }
     }
 }
