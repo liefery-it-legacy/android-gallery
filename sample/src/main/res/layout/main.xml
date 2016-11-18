@@ -8,12 +8,7 @@
     android:padding="16dp">
 
     <com.liefery.android.gallery.Gallery
-        android:id="@+id/gallery1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <com.liefery.android.gallery.Gallery
-        android:id="@+id/gallery2"
+        android:id="@+id/gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
