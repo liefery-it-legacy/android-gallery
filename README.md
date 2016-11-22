@@ -27,7 +27,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.liefery:android-gallery:9ac8f01'
+    compile 'com.github.liefery:android-gallery:1.0.0'
 }
 ```
 
