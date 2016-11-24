@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2
+
+_2016-11-24_
+
+ * Limit image resolution to screen size in Detail screen
+
 ## 1.0.1
 
 _2016-11-24_
