@@ -6,15 +6,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 import com.liefery.android.gallery.Gallery;
 import com.liefery.android.gallery.Gallery.OnTakePhotoListener;
 
-import java.util.ArrayList;
-
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
 public class Activity extends android.app.Activity implements OnTakePhotoListener {
+    public static final String TAG = Gallery.class.getCanonicalName();
+
     private Gallery gallery;
 
     @Override
@@ -35,16 +36,15 @@ public class Activity extends android.app.Activity implements OnTakePhotoListene
         super.onRequestPermissionsResult( request, permissions, results );
 
         if ( request == 420 ) {
-            ArrayList<Integer> list = new ArrayList<>( results.length );
-
-            for ( int result : results ) {
-                list.add( result );
+            if ( results.length != 1 ) {
+                Log.w( TAG, "Unexpected permission results" );
+                return;
             }
 
-            if ( results.length == 0 || list.contains( PERMISSION_DENIED ) ) {
+            if ( results[0] == PERMISSION_DENIED ) {
                 Toast.makeText(
                     this,
-                    "Accept all permissions to take a photo",
+                    "Accept permission to take a photo",
                     Toast.LENGTH_LONG ).show();
             } else {
                 gallery.takePhoto();
@@ -58,24 +58,12 @@ public class Activity extends android.app.Activity implements OnTakePhotoListene
     }
 
     private boolean checkPermissions() {
-        ArrayList<String> permissions = new ArrayList<>();
-
-        if ( ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.CAMERA ) == PERMISSION_DENIED ) {
-            permissions.add( Manifest.permission.CAMERA );
-        }
-
         if ( ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE ) == PERMISSION_DENIED ) {
-            permissions.add( Manifest.permission.WRITE_EXTERNAL_STORAGE );
-        }
-
-        if ( !permissions.isEmpty() ) {
             ActivityCompat.requestPermissions(
                 this,
-                permissions.toArray( new String[permissions.size()] ),
+                new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },
                 420 );
 
             return false;
