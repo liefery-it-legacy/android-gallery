@@ -15,7 +15,6 @@ import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
@@ -439,6 +438,20 @@ public class Gallery extends LinearLayout implements OnClickListener {
         @Override
         public void onActivityResult( int request, int result, Intent data ) {
             super.onActivityResult( request, result, data );
+
+            if ( request != 421 ) {
+                Log.w( TAG, "Unexpected request code " + request );
+                return;
+            }
+
+            if ( result != Activity.RESULT_OK ) {
+                return;
+            }
+
+            if ( data == null ) {
+                Log.w( TAG, "Result data is null" );
+                return;
+            }
 
             int event = data.getIntExtra( "event", -1 );
 
