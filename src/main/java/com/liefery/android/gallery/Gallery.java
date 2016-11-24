@@ -4,10 +4,8 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -149,11 +147,12 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
         button.setText( R.string.gallery_add_photo );
         button.setOnClickListener( this );
-        VectorDrawableCompat icon = VectorDrawableCompat.create(
-            context.getResources(),
+        Drawable icon = ResourcesCompat.getDrawable(
+            getResources(),
             R.drawable.gallery_ic_add_photo,
-            context.getTheme() );
-        DrawableCompat.setTint( icon, button.getCurrentTextColor() );
+            null );
+        Drawable tintableIcon = DrawableCompat.wrap( icon );
+        DrawableCompat.setTint( tintableIcon, button.getCurrentTextColor() );
         button.setCompoundDrawablePadding( dpToPx( 8 ) );
         TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
             button,

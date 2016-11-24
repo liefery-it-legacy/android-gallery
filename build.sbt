@@ -11,6 +11,7 @@ lazy val gallery = project.in( file( "." ) )
             Nil,
         name := "gallery",
         publishArtifact in ( Compile, packageDoc ) := false,
+        renderVectorDrawables := true,
         resolvers += Resolver.jcenterRepo
     )
 
