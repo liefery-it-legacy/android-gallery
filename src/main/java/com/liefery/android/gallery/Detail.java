@@ -1,12 +1,14 @@
 package com.liefery.android.gallery;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -39,7 +41,12 @@ public class Detail extends AppCompatActivity implements Callback {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled( false );
 
-        Picasso.with( this ).load( file ).into( image, this );
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize( size );
+
+        Picasso.with( this ).load( file ).resize( size.x, size.y )
+                        .centerInside().onlyScaleDown().into( image, this );
     }
 
     @Override
