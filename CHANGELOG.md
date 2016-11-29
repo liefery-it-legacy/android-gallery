@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3
+
+_2016-11-29_
+
+ * Fix image orientation on certain old devices
+
 ## 1.0.2
 
 _2016-11-24_
