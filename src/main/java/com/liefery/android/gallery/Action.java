@@ -21,6 +21,12 @@ import static com.liefery.android.gallery.Gallery.*;
 public class Action extends Activity implements EasyImage.Callbacks {
     public static final String TAG = Action.class.getCanonicalName();
 
+    private static final BitmapFactory.Options options = new BitmapFactory.Options();
+
+    static {
+        options.inSampleSize = 2;
+    }
+
     @Override
     public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
@@ -40,7 +46,9 @@ public class Action extends Activity implements EasyImage.Callbacks {
     @Override
     public void onImagePicked( File file, ImageSource source, int type ) {
         // Samsung treatment <3
-        // https://github.com/jkwiecien/EasyImage/issues/43
+        //  - Images are not rotated properly
+        //    https://github.com/jkwiecien/EasyImage/issues/43
+        //  - Rotating a full resolution image may cause out of memory exceptions
         if ( source == ImageSource.CAMERA ) {
             rotateImageIfNecessary( file );
         }
@@ -90,7 +98,7 @@ public class Action extends Activity implements EasyImage.Callbacks {
         }
 
         if ( rotation != 0 ) {
-            Bitmap source = BitmapFactory.decodeFile( file.getPath() );
+            Bitmap source = BitmapFactory.decodeFile( file.getPath(), options );
 
             if ( source == null ) {
                 Log.w(
@@ -118,7 +126,6 @@ public class Action extends Activity implements EasyImage.Callbacks {
                 result.compress( Bitmap.CompressFormat.JPEG, 100, output );
             } catch ( FileNotFoundException exception ) {
                 Log.w( TAG, "Tried to open image file, but was not found" );
-                return;
             } finally {
                 result.recycle();
 
