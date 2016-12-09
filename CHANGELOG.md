@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.4
+
+_2016-12-09_
+
+ * Downsample images before rotating (fixes OOM on Samsung Galaxy S3)
+ * Upgrade to flexbox 0.2.5
+ * Upgrade to sbt-android 1.7.2
+
 ## 1.0.3
 
 _2016-11-29_
