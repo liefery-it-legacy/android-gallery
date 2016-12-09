@@ -7,7 +7,7 @@ lazy val gallery = project.in( file( "." ) )
             "com.github.chrisbanes" % "PhotoView" % "1.3.1" ::
             "com.github.jkwiecien" % "EasyImage" % "1.3.1" ::
             "com.github.square.picasso" % "picasso" % "059993e3cc" ::
-            "com.google.android" % "flexbox" % "0.2.3" ::
+            "com.google.android" % "flexbox" % "0.2.5" ::
             Nil,
         name := "gallery",
         publishArtifact in ( Compile, packageDoc ) := false,
