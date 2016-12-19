@@ -6,7 +6,7 @@ lazy val gallery = project.in( file( "." ) )
             "com.android.support" % "appcompat-v7" % "25.1.0" ::
             "com.github.chrisbanes" % "PhotoView" % "1.3.1" ::
             "com.github.jkwiecien" % "EasyImage" % "1.3.1" ::
-            "com.github.square.picasso" % "picasso" % "059993e3cc" ::
+            "com.github.square.picasso" % "picasso" % "289ed30" ::
             "com.google.android" % "flexbox" % "0.2.5" ::
             Nil,
         name := "gallery",
