@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.5
+
+_2016-12-19_
+
+ * Upgrade to Android support library 25.1.0
+ * Upgrade to picasso 289ed30
+
 ## 1.0.4
 
 _2016-12-09_
