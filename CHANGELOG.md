@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.6
+
+_2017_05_18_
+
+ * Upgrade to PhotoView 2.0.0
+ * Upgrade to appcompat-v7 25.3.1
+ * Upgrade to flexbox 0.2.6
+ * Upgrade to sbt 0.13.15
+ * Upgrade to sbt-android 1.7.7
+ * Upgrade to scala 2.11.11
+
 ## 1.0.5
 
 _2016-12-19_
