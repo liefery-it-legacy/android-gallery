@@ -1,8 +1,15 @@
 # Changelog
 
+## 1.0.7
+
+_2017-05-18_
+
+ * Upgrade to EasyImage 2.0.2  
+   `minSdkVersion` had to be raised to 16 accordingly
+
 ## 1.0.6
 
-_2017_05_18_
+_2017-05-18_
 
  * Upgrade to PhotoView 2.0.0
  * Upgrade to appcompat-v7 25.3.1
