@@ -11,17 +11,17 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
+import com.github.chrisbanes.photoview.PhotoView;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 import java.io.File;
 
 import static com.liefery.android.gallery.Gallery.EVENT_DELETE;
 
 public class Detail extends AppCompatActivity implements Callback {
-    private ImageView image;
+    private PhotoView image;
 
     private File file;
 
@@ -35,7 +35,7 @@ public class Detail extends AppCompatActivity implements Callback {
         file = new File( path );
 
         Toolbar toolbar = (Toolbar) findViewById( R.id.gallery_detail_toolbar );
-        image = (ImageView) findViewById( R.id.gallery_detail_image );
+        image = (PhotoView) findViewById( R.id.gallery_detail_image );
 
         setSupportActionBar( toolbar );
         ActionBar actionBar = getSupportActionBar();

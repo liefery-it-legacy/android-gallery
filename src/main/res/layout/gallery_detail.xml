@@ -7,11 +7,10 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/gallery_detail_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside" />
+        android:layout_height="match_parent" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/gallery_detail_toolbar"
