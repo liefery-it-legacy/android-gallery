@@ -6,12 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import pl.aprilapps.easyphotopicker.EasyImage;
 import pl.aprilapps.easyphotopicker.EasyImage.ImageSource;
 
 import java.io.*;
+import java.util.List;
 
 import static android.media.ExifInterface.ORIENTATION_ROTATE_180;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_270;
@@ -44,19 +46,29 @@ public class Action extends Activity implements EasyImage.Callbacks {
     }
 
     @Override
-    public void onImagePicked( File file, ImageSource source, int type ) {
-        // Samsung treatment <3
-        //  - Images are not rotated properly
-        //    https://github.com/jkwiecien/EasyImage/issues/43
-        //  - Rotating a full resolution image may cause out of memory exceptions
-        if ( source == ImageSource.CAMERA ) {
-            rotateImageIfNecessary( file );
+    public void onImagesPicked(
+        @NonNull List<File> files,
+        ImageSource source,
+        int type ) {
+        if ( files.size() > 0 ) {
+            File file = files.get( 0 );
+
+            // Samsung treatment <3
+            //  - Images are not rotated properly
+            //    https://github.com/jkwiecien/EasyImage/issues/43
+            //  - Rotating a full resolution image may cause out of memory exceptions
+            if ( source == ImageSource.CAMERA ) {
+                rotateImageIfNecessary( file );
+            }
+
+            Intent intent = createIntent( EVENT_SUCCESS ).putExtra(
+                "file",
+                file.getAbsolutePath() );
+            setResult( RESULT_OK, intent );
+        } else {
+            setResult( RESULT_CANCELED );
         }
 
-        Intent intent = createIntent( EVENT_SUCCESS ).putExtra(
-            "file",
-            file.getAbsolutePath() );
-        setResult( RESULT_OK, intent );
         finish();
     }
 
@@ -73,14 +85,15 @@ public class Action extends Activity implements EasyImage.Callbacks {
         } catch ( FileNotFoundException exception ) {
             Log.w( TAG, "Tried to open image file, but was not found" );
             return;
-        } catch ( IOException e ) {
+        } catch ( IOException exception ) {
             Log.w( TAG, "Failed to parse EXIF data from image file" );
             return;
         } finally {
             if ( input != null ) {
                 try {
                     input.close();
-                } catch ( IOException e ) {
+                } catch ( IOException exception ) {
+                    Log.e( TAG, "Failed to close Stream", exception );
                 }
             }
         }

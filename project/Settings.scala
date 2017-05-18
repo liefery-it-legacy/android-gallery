@@ -9,7 +9,7 @@ object Settings {
             "-source" :: "1.7" ::
             "-target" :: "1.7" ::
             Nil,
-        minSdkVersion := "14",
+        minSdkVersion := "16",
         organization := "com.liefery.android",
         platformTarget := "android-24",
         resolvers += "jitpack" at "https://jitpack.io",
