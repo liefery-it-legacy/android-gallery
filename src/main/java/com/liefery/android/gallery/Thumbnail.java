@@ -2,20 +2,16 @@ package com.liefery.android.gallery;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
 
@@ -68,9 +64,13 @@ class Thumbnail extends FrameLayout {
         setClickable( true );
         setOnClickListener( onClick );
 
-        Picasso.with( getContext() ).load( file )
-                        .resize( params.width, params.height ).centerCrop()
-                        .into( image );
+        Glide
+                        .with( getContext() )
+                        .load( file )
+                        .apply(
+                            RequestOptions.overrideOf(
+                                params.width,
+                                params.height ).centerCrop() ).into( image );
     }
 
     public void clear() {

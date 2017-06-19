@@ -2,6 +2,7 @@ package com.liefery.android.gallery;
 
 import android.content.Intent;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -11,16 +12,20 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chrisbanes.photoview.PhotoViewAttacher;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
 import static com.liefery.android.gallery.Gallery.EVENT_DELETE;
 
-public class Detail extends AppCompatActivity implements Callback {
+public class Detail extends AppCompatActivity implements RequestListener<Drawable> {
     private PhotoView image;
 
     private File file;
@@ -45,8 +50,12 @@ public class Detail extends AppCompatActivity implements Callback {
         Point size = new Point();
         display.getSize( size );
 
-        Picasso.with( this ).load( file ).resize( size.x, size.y )
-                        .centerInside().onlyScaleDown().into( image, this );
+        Glide
+                        .with( this )
+                        .load( file )
+                        .apply(
+                            RequestOptions.overrideOf( size.x, size.y )
+                                            .centerInside() ).into( image );
     }
 
     @Override
@@ -78,11 +87,22 @@ public class Detail extends AppCompatActivity implements Callback {
     }
 
     @Override
-    public void onSuccess() {
-        new PhotoViewAttacher( image );
+    public boolean onLoadFailed(
+        @Nullable GlideException e,
+        Object model,
+        Target<Drawable> target,
+        boolean isFirstResource ) {
+        return false;
     }
 
     @Override
-    public void onError() {
+    public boolean onResourceReady(
+        Drawable resource,
+        Object model,
+        Target<Drawable> target,
+        DataSource dataSource,
+        boolean isFirstResource ) {
+        new PhotoViewAttacher( image );
+        return true;
     }
 }
