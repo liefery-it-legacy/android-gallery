@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0
+
+_2017-06-19_
+
+ * Upgrade to Flexbox 0.2.7
+ * Using Glide 4.0.0-RC0 instead of Picasso for image loading
+
 ## 1.0.7
 
 _2017-05-18_
