@@ -11,8 +11,7 @@ object Settings {
             Nil,
         minSdkVersion := "16",
         organization := "com.liefery.android",
-        platformTarget := "android-24",
-        resolvers += "jitpack" at "https://jitpack.io",
+        platformTarget := "android-26",
         scalaVersion := "2.11.11"
     )
 }
