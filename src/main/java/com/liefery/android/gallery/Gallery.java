@@ -31,7 +31,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.google.android.flexbox.FlexboxLayout.*;
+import static com.google.android.flexbox.AlignContent.FLEX_START;
+import static com.google.android.flexbox.FlexWrap.WRAP;
 
 public class Gallery extends LinearLayout implements OnClickListener {
     public static final String TAG = Gallery.class.getCanonicalName();
@@ -132,9 +133,9 @@ public class Gallery extends LinearLayout implements OnClickListener {
         setOrientation( VERTICAL );
 
         images.setVisibility( GONE );
-        images.setAlignContent( ALIGN_CONTENT_FLEX_START );
-        images.setAlignItems( ALIGN_ITEMS_FLEX_START );
-        images.setFlexWrap( FLEX_WRAP_WRAP );
+        images.setAlignContent( FLEX_START );
+        images.setAlignItems( FLEX_START );
+        images.setFlexWrap( WRAP );
         Drawable divider = ResourcesCompat.getDrawable(
             getResources(),
             R.drawable.gallery_divider,
