@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.1
+
+_2017-08-31_
+
+ *  Upgrade to support-library 26.0.2
+ *  Upgrade to flexbox 0.3.0
+ *  Upgrade to glide 4.0.0
+ *  Upgrade to sbt-android 1.7.9
+ *  Upgrade to sbt 0.13.16
+
 ## 1.1.0
 
 _2017-06-19_
