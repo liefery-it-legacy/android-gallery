@@ -3,11 +3,11 @@ lazy val gallery = project.in( file( "." ) )
     .settings( Settings.common )
     .settings(
         libraryDependencies ++=
-            "com.android.support" % "appcompat-v7" % "26.0.2" ::
-            "com.github.chrisbanes" % "PhotoView" % "2.0.0" ::
-            ( "com.github.jkwiecien" % "EasyImage" % "2.0.2" exclude( "com.android.support", "appcompat-v7" ) ) ::
-            "com.github.bumptech.glide" % "glide" % "4.0.0" ::  
-            "com.google.android" % "flexbox" % "0.3.0" ::
+            Dependencies.easyImage ::
+            Dependencies.flexbox ::
+            Dependencies.glide ::
+            Dependencies.photoView ::
+            Dependencies.supportAppcompat ::
             Nil,
         name := "gallery",
         publishArtifact in ( Compile, packageDoc ) := false,
