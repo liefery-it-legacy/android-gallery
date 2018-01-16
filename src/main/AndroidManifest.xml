@@ -9,12 +9,12 @@
     <application>
 
         <activity
-            android:name=".Action"
+            android:name=".ActionActivity"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
-            android:name=".Detail"
+            android:name=".DetailActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
     </application>

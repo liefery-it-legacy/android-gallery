@@ -34,8 +34,8 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.google.android.flexbox.AlignContent.FLEX_START;
 import static com.google.android.flexbox.FlexWrap.WRAP;
 
-public class Gallery extends LinearLayout implements OnClickListener {
-    public static final String TAG = Gallery.class.getCanonicalName();
+public class GalleryView extends LinearLayout implements OnClickListener {
+    public static final String TAG = GalleryView.class.getCanonicalName();
 
     public static final String ACTION = TAG + ".action";
 
@@ -77,31 +77,31 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
     private OnTakePhotoListener listener;
 
-    public Gallery( Context context ) {
+    public GalleryView( Context context ) {
         super( context );
 
         TypedArray styles = context
-                        .obtainStyledAttributes( R.styleable.Gallery );
+                        .obtainStyledAttributes( R.styleable.GalleryView );
         initialize( styles );
         styles.recycle();
     }
 
-    public Gallery( Context context, AttributeSet attrs ) {
+    public GalleryView( Context context, AttributeSet attrs ) {
         super( context, attrs );
 
         TypedArray styles = context.obtainStyledAttributes(
             attrs,
-            R.styleable.Gallery );
+            R.styleable.GalleryView );
         initialize( styles );
         styles.recycle();
     }
 
-    public Gallery( Context context, AttributeSet attrs, int defStyleAttr ) {
+    public GalleryView( Context context, AttributeSet attrs, int defStyleAttr ) {
         super( context, attrs, defStyleAttr );
 
         TypedArray styles = context.obtainStyledAttributes(
             attrs,
-            R.styleable.Gallery,
+            R.styleable.GalleryView,
             defStyleAttr,
             0 );
         initialize( styles );
@@ -109,7 +109,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     @TargetApi( 21 )
-    public Gallery(
+    public GalleryView(
         Context context,
         AttributeSet attrs,
         int defStyleAttr,
@@ -118,7 +118,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
 
         TypedArray styles = context.obtainStyledAttributes(
             attrs,
-            R.styleable.Gallery,
+            R.styleable.GalleryView,
             defStyleAttr,
             defStyleRes );
         initialize( styles );
@@ -168,19 +168,19 @@ public class Gallery extends LinearLayout implements OnClickListener {
         addView( button, WRAP_CONTENT, WRAP_CONTENT );
 
         int thumbnailBackgroundColor = styles.getColor(
-            R.styleable.Gallery_gallery_thumbnailBackgroundColor,
+            R.styleable.GalleryView_gallery_thumbnailBackgroundColor,
             Color.GRAY );
         setThumbnailBackgroundColor( thumbnailBackgroundColor );
 
         int thumbnailDefaultSize = dpToPx( 80 );
 
         int thumbnailWidth = styles.getDimensionPixelSize(
-            R.styleable.Gallery_gallery_thumbnailWidth,
+            R.styleable.GalleryView_gallery_thumbnailWidth,
             thumbnailDefaultSize );
         setThumbnailWidth( thumbnailWidth );
 
         int thumbnailHeight = styles.getDimensionPixelSize(
-            R.styleable.Gallery_gallery_thumbnailHeight,
+            R.styleable.GalleryView_gallery_thumbnailHeight,
             thumbnailDefaultSize );
         setThumbnailHeight( thumbnailHeight );
 
@@ -188,14 +188,14 @@ public class Gallery extends LinearLayout implements OnClickListener {
         Auxilery auxilery = (Auxilery) fm.findFragmentByTag( Auxilery.TAG );
 
         if ( auxilery != null ) {
-            auxilery.setGallery( this );
+            auxilery.setGalleryView( this );
         }
     }
 
     public void setThumbnailBackgroundColor( @ColorInt int color ) {
         this.thumbnailBackgroundColor = color;
 
-        for ( Thumbnail thumbnail : getThumbnails() ) {
+        for ( ThumbnailView thumbnail : getThumbnailViews() ) {
             thumbnail.setBackgroundColor( color );
         }
     }
@@ -207,7 +207,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
     public void setThumbnailWidth( int width ) {
         this.thumbnailWidth = width;
 
-        for ( Thumbnail thumbnail : getThumbnails() ) {
+        for ( ThumbnailView thumbnail : getThumbnailViews() ) {
             thumbnail.getLayoutParams().width = width;
         }
     }
@@ -219,7 +219,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
     public void setThumbnailHeight( int height ) {
         this.thumbnailHeight = height;
 
-        for ( Thumbnail thumbnail : getThumbnails() ) {
+        for ( ThumbnailView thumbnail : getThumbnailViews() ) {
             thumbnail.getLayoutParams().height = height;
         }
     }
@@ -245,7 +245,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         fm.beginTransaction().add( auxiliary, Auxilery.TAG ).commit();
         fm.executePendingTransactions();
 
-        Intent intent = new Intent( context, Action.class );
+        Intent intent = new Intent( context, ActionActivity.class );
         auxiliary.startActivityForResult( intent, 421 );
     }
 
@@ -255,7 +255,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         ArrayList<File> files = new ArrayList<>();
 
         for ( int i = 0; i < count; i++ ) {
-            File file = ( (Thumbnail) images.getChildAt( i ) ).getFile();
+            File file = ( (ThumbnailView) images.getChildAt( i ) ).getFile();
 
             if ( file != null ) {
                 files.add( file );
@@ -271,7 +271,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         ArrayList<String> paths = new ArrayList<>();
 
         for ( int i = 0; i < count; i++ ) {
-            File file = ( (Thumbnail) images.getChildAt( i ) ).getFile();
+            File file = ( (ThumbnailView) images.getChildAt( i ) ).getFile();
 
             if ( file != null ) {
                 paths.add( file.getAbsolutePath() );
@@ -291,12 +291,12 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     @NonNull
-    private ArrayList<Thumbnail> getThumbnails() {
+    private ArrayList<ThumbnailView> getThumbnailViews() {
         int count = images.getChildCount();
-        ArrayList<Thumbnail> thumbnails = new ArrayList<>( count );
+        ArrayList<ThumbnailView> thumbnails = new ArrayList<>( count );
 
         for ( int i = 0; i < count; i++ ) {
-            thumbnails.add( (Thumbnail) images.getChildAt( i ) );
+            thumbnails.add( (ThumbnailView) images.getChildAt( i ) );
         }
 
         return thumbnails;
@@ -307,7 +307,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
             images.setVisibility( VISIBLE );
         }
 
-        Thumbnail thumbnail = addPlaceholder();
+        ThumbnailView thumbnail = addPlaceholder();
 
         if ( animated ) {
             ViewCompat.setScaleX( thumbnail, 0 );
@@ -326,13 +326,12 @@ public class Gallery extends LinearLayout implements OnClickListener {
             public void onClick( View view ) {
                 FragmentManager fm = getFragmentManager( context );
 
-                Auxilery auxiliary = Auxilery.newInstance( Gallery.this );
+                Auxilery auxiliary = Auxilery.newInstance( GalleryView.this );
                 fm.beginTransaction().add( auxiliary, Auxilery.TAG ).commit();
                 fm.executePendingTransactions();
 
-                Intent intent = new Intent( context, Detail.class ).putExtra(
-                    "file",
-                    path );
+                Intent intent = new Intent( context, DetailActivity.class )
+                                .putExtra( "file", path );
                 auxiliary.startActivityForResult( intent, 421 );
             }
         };
@@ -341,10 +340,10 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     private boolean removePhoto( @NonNull File file ) {
-        ArrayList<Thumbnail> thumbnails = getThumbnails();
-        Thumbnail selection = null;
+        ArrayList<ThumbnailView> thumbnails = getThumbnailViews();
+        ThumbnailView selection = null;
 
-        for ( Thumbnail thumbnail : thumbnails ) {
+        for ( ThumbnailView thumbnail : thumbnails ) {
             File thumbnailFile = thumbnail.getFile();
 
             if ( thumbnailFile != null && thumbnailFile.equals( file ) ) {
@@ -357,7 +356,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
             Log.w( TAG, "Deleted file is not present in gallery" );
             return false;
         } else {
-            final Thumbnail finalSelection = selection;
+            final ThumbnailView finalSelection = selection;
 
             ViewCompat.animate( selection ).scaleX( 0 ).scaleY( 0 ).alpha( 0 )
                             .setStartDelay( 250 ).setDuration( 250 )
@@ -377,8 +376,8 @@ public class Gallery extends LinearLayout implements OnClickListener {
     }
 
     @NonNull
-    private Thumbnail addPlaceholder() {
-        Thumbnail thumbnail = new Thumbnail( getContext() );
+    private ThumbnailView addPlaceholder() {
+        ThumbnailView thumbnail = new ThumbnailView( getContext() );
         thumbnail.setBackgroundColor( getThumbnailBackgroundColor() );
 
         images.addView( thumbnail, getThumbnailWidth(), getThumbnailHeight() );
@@ -424,16 +423,16 @@ public class Gallery extends LinearLayout implements OnClickListener {
     public static class Auxilery extends Fragment {
         public static final String TAG = Auxilery.class.getCanonicalName();
 
-        private Gallery gallery;
+        private GalleryView galleryView;
 
-        public static Auxilery newInstance( Gallery gallery ) {
+        public static Auxilery newInstance( GalleryView galleryView ) {
             Auxilery auxilery = new Auxilery();
-            auxilery.setGallery( gallery );
+            auxilery.setGalleryView( galleryView );
             return auxilery;
         }
 
-        public void setGallery( Gallery gallery ) {
-            this.gallery = gallery;
+        public void setGalleryView( GalleryView galleryView ) {
+            this.galleryView = galleryView;
         }
 
         @Override
@@ -463,7 +462,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
                 case EVENT_SUCCESS:
                     path = data.getStringExtra( "file" );
                     file = new File( path );
-                    gallery.addPhoto( file, true );
+                    galleryView.addPhoto( file, true );
                 break;
                 case EVENT_CANCEL:
                 break;
@@ -472,7 +471,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
                 case EVENT_DELETE:
                     path = data.getStringExtra( "file" );
                     file = new File( path );
-                    gallery.removePhoto( file );
+                    galleryView.removePhoto( file );
                 break;
                 default:
                     Log.w( TAG, "Received unknown event code " + event );
@@ -484,7 +483,7 @@ public class Gallery extends LinearLayout implements OnClickListener {
         public void onDestroyView() {
             super.onDestroyView();
 
-            gallery = null;
+            galleryView = null;
         }
     }
 }

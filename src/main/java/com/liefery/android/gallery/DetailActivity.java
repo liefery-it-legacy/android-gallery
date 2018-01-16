@@ -23,9 +23,9 @@ import com.github.chrisbanes.photoview.PhotoViewAttacher;
 
 import java.io.File;
 
-import static com.liefery.android.gallery.Gallery.EVENT_DELETE;
+import static com.liefery.android.gallery.GalleryView.EVENT_DELETE;
 
-public class Detail extends AppCompatActivity implements RequestListener<Drawable> {
+public class DetailActivity extends AppCompatActivity implements RequestListener<Drawable> {
     private PhotoView image;
 
     private File file;
@@ -75,7 +75,7 @@ public class Detail extends AppCompatActivity implements RequestListener<Drawabl
                     "File could not be delete: " + file.getAbsolutePath() );
             }
 
-            Intent intent = Gallery.createIntent( EVENT_DELETE ).putExtra(
+            Intent intent = GalleryView.createIntent( EVENT_DELETE ).putExtra(
                 "file",
                 this.file.getAbsolutePath() );
             setResult( RESULT_OK, intent );

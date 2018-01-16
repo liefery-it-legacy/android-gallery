@@ -18,10 +18,10 @@ import java.util.List;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_180;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_270;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_90;
-import static com.liefery.android.gallery.Gallery.*;
+import static com.liefery.android.gallery.GalleryView.*;
 
-public class Action extends Activity implements EasyImage.Callbacks {
-    public static final String TAG = Action.class.getCanonicalName();
+public class ActionActivity extends Activity implements EasyImage.Callbacks {
+    public static final String TAG = ActionActivity.class.getCanonicalName();
 
     private static final BitmapFactory.Options options = new BitmapFactory.Options();
 

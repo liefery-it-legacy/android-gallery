@@ -8,15 +8,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
-import com.liefery.android.gallery.Gallery;
-import com.liefery.android.gallery.Gallery.OnTakePhotoListener;
+import com.liefery.android.gallery.GalleryView;
+import com.liefery.android.gallery.GalleryView.OnTakePhotoListener;
 
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
 public class Activity extends android.app.Activity implements OnTakePhotoListener {
-    public static final String TAG = Gallery.class.getCanonicalName();
+    public static final String TAG = GalleryView.class.getCanonicalName();
 
-    private Gallery gallery;
+    private GalleryView galleryView;
 
     @Override
     public void onCreate( @Nullable Bundle state ) {
@@ -24,8 +24,8 @@ public class Activity extends android.app.Activity implements OnTakePhotoListene
 
         setContentView( R.layout.main );
 
-        gallery = (Gallery) findViewById( R.id.gallery );
-        gallery.setOnTakePhotoListener( this );
+        galleryView = (GalleryView) findViewById( R.id.gallery );
+        galleryView.setOnTakePhotoListener( this );
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Activity extends android.app.Activity implements OnTakePhotoListene
                     "Accept permission to take a photo",
                     Toast.LENGTH_LONG ).show();
             } else {
-                gallery.takePhoto();
+                galleryView.takePhoto();
             }
         }
     }

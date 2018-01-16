@@ -2,7 +2,7 @@
 
 <resources>
 
-    <declare-styleable name="Gallery">
+    <declare-styleable name="GalleryView">
 
         <attr name="gallery_thumbnailBackgroundColor"
               format="color" />

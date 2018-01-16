@@ -17,24 +17,24 @@ import java.io.File;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
-class Thumbnail extends FrameLayout {
-    public Thumbnail( Context context ) {
+class ThumbnailView extends FrameLayout {
+    public ThumbnailView( Context context ) {
         super( context );
         initialize();
     }
 
-    public Thumbnail( Context context, AttributeSet attrs ) {
+    public ThumbnailView( Context context, AttributeSet attrs ) {
         super( context, attrs );
         initialize();
     }
 
-    public Thumbnail( Context context, AttributeSet attrs, int defStyleAttr ) {
+    public ThumbnailView( Context context, AttributeSet attrs, int defStyleAttr ) {
         super( context, attrs, defStyleAttr );
         initialize();
     }
 
     @TargetApi( 21 )
-    public Thumbnail(
+    public ThumbnailView(
         Context context,
         AttributeSet attrs,
         int defStyleAttr,
