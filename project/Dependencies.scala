@@ -14,5 +14,5 @@ object Dependencies {
     val photoView = ( "com.github.chrisbanes" % "PhotoView" % "2.1.3" )
         .exclude( "com.android.support", "support-core-utils" )
 
-    val supportAppcompat = "com.android.support" % "appcompat-v7" % "26.0.2"
+    val supportAppcompat = "com.android.support" % "appcompat-v7" % "26.1.0"
 }
