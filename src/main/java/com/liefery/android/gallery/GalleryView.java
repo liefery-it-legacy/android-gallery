@@ -34,7 +34,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.google.android.flexbox.AlignContent.FLEX_START;
 import static com.google.android.flexbox.FlexWrap.WRAP;
 
-public class GalleryView extends LinearLayout implements OnClickListener {
+public class GalleryView extends FlexboxLayout implements OnClickListener {
     public static final String TAG = GalleryView.class.getCanonicalName();
 
     public static final String ACTION = TAG + ".action";
@@ -73,7 +73,7 @@ public class GalleryView extends LinearLayout implements OnClickListener {
 
     private FlexboxLayout images = new FlexboxLayout( getContext() );
 
-    private Button button = new Button( getContext() );
+    //    private Button button = new Button( getContext() );
 
     private OnTakePhotoListener listener;
 
@@ -108,64 +108,46 @@ public class GalleryView extends LinearLayout implements OnClickListener {
         styles.recycle();
     }
 
-    @TargetApi( 21 )
-    public GalleryView(
-        Context context,
-        AttributeSet attrs,
-        int defStyleAttr,
-        int defStyleRes ) {
-        super( context, attrs, defStyleAttr, defStyleRes );
-
-        TypedArray styles = context.obtainStyledAttributes(
-            attrs,
-            R.styleable.GalleryView,
-            defStyleAttr,
-            defStyleRes );
-        initialize( styles );
-        styles.recycle();
-    }
-
     private void initialize( @NonNull TypedArray styles ) {
         Context context = getContext();
 
         setClipChildren( false );
         setClipToPadding( false );
-        setOrientation( VERTICAL );
 
-        images.setVisibility( GONE );
-        images.setAlignContent( FLEX_START );
-        images.setAlignItems( FLEX_START );
-        images.setFlexWrap( WRAP );
+        //images.setVisibility( GONE );
+        setAlignContent( FLEX_START );
+        setAlignItems( FLEX_START );
+        setFlexWrap( WRAP );
         Drawable divider = ResourcesCompat.getDrawable(
             getResources(),
             R.drawable.gallery_divider,
             null );
-        images.setShowDividerHorizontal( SHOW_DIVIDER_MIDDLE );
-        images.setDividerDrawableHorizontal( divider );
-        images.setShowDividerVertical( SHOW_DIVIDER_MIDDLE );
-        images.setDividerDrawableVertical( divider );
+        setShowDividerHorizontal( SHOW_DIVIDER_MIDDLE );
+        setDividerDrawableHorizontal( divider );
+        setShowDividerVertical( SHOW_DIVIDER_MIDDLE );
+        setDividerDrawableVertical( divider );
 
-        button.setText( R.string.gallery_add_photo );
-        button.setOnClickListener( this );
-        Drawable icon = ResourcesCompat.getDrawable(
-            getResources(),
-            R.drawable.gallery_ic_add_photo,
-            null );
-        Drawable tintableIcon = DrawableCompat.wrap( icon );
-        DrawableCompat.setTint( tintableIcon, button.getCurrentTextColor() );
-        button.setCompoundDrawablePadding( dpToPx( 8 ) );
-        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            button,
-            icon,
-            null,
-            null,
-            null );
+        //        button.setText( R.string.gallery_add_photo );
+        //        button.setOnClickListener( this );
+        //        Drawable icon = ResourcesCompat.getDrawable(
+        //            getResources(),
+        //            R.drawable.gallery_ic_add_photo,
+        //            null );
+        //        Drawable tintableIcon = DrawableCompat.wrap( icon );
+        //        DrawableCompat.setTint( tintableIcon, button.getCurrentTextColor() );
+        //        button.setCompoundDrawablePadding( dpToPx( 8 ) );
+        //        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+        //            button,
+        //            icon,
+        //            null,
+        //            null,
+        //            null );
 
-        LayoutParams params = new LayoutParams( WRAP_CONTENT, WRAP_CONTENT );
-        params.bottomMargin = dpToPx( 16 );
-        addView( images, params );
+        //        LayoutParams params = new LayoutParams( WRAP_CONTENT, WRAP_CONTENT );
+        //        params.bottomMargin = dpToPx( 16 );
+        //        addView( images, params );
 
-        addView( button, WRAP_CONTENT, WRAP_CONTENT );
+        //        addView( button, WRAP_CONTENT, WRAP_CONTENT );
 
         int thumbnailBackgroundColor = styles.getColor(
             R.styleable.GalleryView_gallery_thumbnailBackgroundColor,
