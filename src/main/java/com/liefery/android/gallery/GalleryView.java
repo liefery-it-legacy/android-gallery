@@ -21,6 +21,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -165,8 +166,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     public void setThumbnailWidth( int width ) {
         this.thumbnailWidth = width;
 
-        for ( ThumbnailView thumbnail : getThumbnailViews() ) {
-            thumbnail.getLayoutParams().width = width;
+        for ( int i = 0; i < getChildCount(); i++ ) {
+            getChildAt( i ).getLayoutParams().width = width;
         }
     }
 
@@ -177,8 +178,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     public void setThumbnailHeight( int height ) {
         this.thumbnailHeight = height;
 
-        for ( ThumbnailView thumbnail : getThumbnailViews() ) {
-            thumbnail.getLayoutParams().height = height;
+        for ( int i = 0; i < getChildCount(); i++ ) {
+            getChildAt( i ).getLayoutParams().height = height;
         }
     }
 
@@ -326,22 +327,10 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     }
 
     private ImageButton addButton() {
-        ImageButton button = new ImageButton( getContext() );
-        button.setBackgroundColor( getThumbnailBackgroundColor() );
-        button.setContentDescription( getResources().getString(
-            R.string.gallery_add_photo ) );
+        ImageButton button = (ImageButton) LayoutInflater.from( getContext() )
+                        .inflate( R.layout.gallery_add_photo, this, false );
         button.setOnClickListener( this );
-
-        Drawable icon = ResourcesCompat.getDrawable(
-            getResources(),
-            R.drawable.gallery_ic_add_photo,
-            null );
-        Drawable tintedIcon = DrawableCompat.wrap( icon );
-        DrawableCompat.setTint( tintedIcon, Color.WHITE );
-        button.setImageDrawable( tintedIcon );
-
         addView( button, getThumbnailWidth(), getThumbnailHeight() );
-
         return button;
     }
 
