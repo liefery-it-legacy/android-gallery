@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0
+
+_2018-01-17_
+
+ * Show "add photo" button as thumbnail
+ * Give each class a proper suffix for easier identification
+ * Upgrade to support-library 26.1.0
+ * Upgrade to glide 4.3.1
+ * Upgrade to easy-image 2.0.4
+ * Upgrade to flexbox 0.3.2
+ * Upgrade to sbt-android 1.7.10
+
 ## 1.1.1
 
 _2017-08-31_
