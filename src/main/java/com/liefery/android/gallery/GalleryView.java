@@ -21,9 +21,11 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import com.google.android.flexbox.FlexboxLayout;
 
@@ -34,7 +36,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.google.android.flexbox.AlignContent.FLEX_START;
 import static com.google.android.flexbox.FlexWrap.WRAP;
 
-public class GalleryView extends LinearLayout implements OnClickListener {
+public class GalleryView extends FlexboxLayout implements OnClickListener {
     public static final String TAG = GalleryView.class.getCanonicalName();
 
     public static final String ACTION = TAG + ".action";
@@ -71,10 +73,6 @@ public class GalleryView extends LinearLayout implements OnClickListener {
 
     private int thumbnailHeight;
 
-    private FlexboxLayout images = new FlexboxLayout( getContext() );
-
-    private Button button = new Button( getContext() );
-
     private OnTakePhotoListener listener;
 
     public GalleryView( Context context ) {
@@ -108,64 +106,23 @@ public class GalleryView extends LinearLayout implements OnClickListener {
         styles.recycle();
     }
 
-    @TargetApi( 21 )
-    public GalleryView(
-        Context context,
-        AttributeSet attrs,
-        int defStyleAttr,
-        int defStyleRes ) {
-        super( context, attrs, defStyleAttr, defStyleRes );
-
-        TypedArray styles = context.obtainStyledAttributes(
-            attrs,
-            R.styleable.GalleryView,
-            defStyleAttr,
-            defStyleRes );
-        initialize( styles );
-        styles.recycle();
-    }
-
     private void initialize( @NonNull TypedArray styles ) {
         Context context = getContext();
 
         setClipChildren( false );
         setClipToPadding( false );
-        setOrientation( VERTICAL );
 
-        images.setVisibility( GONE );
-        images.setAlignContent( FLEX_START );
-        images.setAlignItems( FLEX_START );
-        images.setFlexWrap( WRAP );
+        setAlignContent( FLEX_START );
+        setAlignItems( FLEX_START );
+        setFlexWrap( WRAP );
         Drawable divider = ResourcesCompat.getDrawable(
             getResources(),
             R.drawable.gallery_divider,
             null );
-        images.setShowDividerHorizontal( SHOW_DIVIDER_MIDDLE );
-        images.setDividerDrawableHorizontal( divider );
-        images.setShowDividerVertical( SHOW_DIVIDER_MIDDLE );
-        images.setDividerDrawableVertical( divider );
-
-        button.setText( R.string.gallery_add_photo );
-        button.setOnClickListener( this );
-        Drawable icon = ResourcesCompat.getDrawable(
-            getResources(),
-            R.drawable.gallery_ic_add_photo,
-            null );
-        Drawable tintableIcon = DrawableCompat.wrap( icon );
-        DrawableCompat.setTint( tintableIcon, button.getCurrentTextColor() );
-        button.setCompoundDrawablePadding( dpToPx( 8 ) );
-        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            button,
-            icon,
-            null,
-            null,
-            null );
-
-        LayoutParams params = new LayoutParams( WRAP_CONTENT, WRAP_CONTENT );
-        params.bottomMargin = dpToPx( 16 );
-        addView( images, params );
-
-        addView( button, WRAP_CONTENT, WRAP_CONTENT );
+        setShowDividerHorizontal( SHOW_DIVIDER_MIDDLE );
+        setDividerDrawableHorizontal( divider );
+        setShowDividerVertical( SHOW_DIVIDER_MIDDLE );
+        setDividerDrawableVertical( divider );
 
         int thumbnailBackgroundColor = styles.getColor(
             R.styleable.GalleryView_gallery_thumbnailBackgroundColor,
@@ -190,6 +147,8 @@ public class GalleryView extends LinearLayout implements OnClickListener {
         if ( auxilery != null ) {
             auxilery.setGalleryView( this );
         }
+
+        addButton();
     }
 
     public void setThumbnailBackgroundColor( @ColorInt int color ) {
@@ -207,8 +166,8 @@ public class GalleryView extends LinearLayout implements OnClickListener {
     public void setThumbnailWidth( int width ) {
         this.thumbnailWidth = width;
 
-        for ( ThumbnailView thumbnail : getThumbnailViews() ) {
-            thumbnail.getLayoutParams().width = width;
+        for ( int i = 0; i < getChildCount(); i++ ) {
+            getChildAt( i ).getLayoutParams().width = width;
         }
     }
 
@@ -219,8 +178,8 @@ public class GalleryView extends LinearLayout implements OnClickListener {
     public void setThumbnailHeight( int height ) {
         this.thumbnailHeight = height;
 
-        for ( ThumbnailView thumbnail : getThumbnailViews() ) {
-            thumbnail.getLayoutParams().height = height;
+        for ( int i = 0; i < getChildCount(); i++ ) {
+            getChildAt( i ).getLayoutParams().height = height;
         }
     }
 
@@ -251,11 +210,11 @@ public class GalleryView extends LinearLayout implements OnClickListener {
 
     @NonNull
     public ArrayList<File> getImages() {
-        int count = images.getChildCount();
+        int count = getChildCount();
         ArrayList<File> files = new ArrayList<>();
 
-        for ( int i = 0; i < count; i++ ) {
-            File file = ( (ThumbnailView) images.getChildAt( i ) ).getFile();
+        for ( int i = 0; i < count - 1; i++ ) {
+            File file = ( (ThumbnailView) getChildAt( i ) ).getFile();
 
             if ( file != null ) {
                 files.add( file );
@@ -267,11 +226,11 @@ public class GalleryView extends LinearLayout implements OnClickListener {
 
     @NonNull
     public ArrayList<String> getPaths() {
-        int count = images.getChildCount();
+        int count = getChildCount();
         ArrayList<String> paths = new ArrayList<>();
 
-        for ( int i = 0; i < count; i++ ) {
-            File file = ( (ThumbnailView) images.getChildAt( i ) ).getFile();
+        for ( int i = 0; i < count - 1; i++ ) {
+            File file = ( (ThumbnailView) getChildAt( i ) ).getFile();
 
             if ( file != null ) {
                 paths.add( file.getAbsolutePath() );
@@ -292,21 +251,17 @@ public class GalleryView extends LinearLayout implements OnClickListener {
 
     @NonNull
     private ArrayList<ThumbnailView> getThumbnailViews() {
-        int count = images.getChildCount();
+        int count = getChildCount();
         ArrayList<ThumbnailView> thumbnails = new ArrayList<>( count );
 
-        for ( int i = 0; i < count; i++ ) {
-            thumbnails.add( (ThumbnailView) images.getChildAt( i ) );
+        for ( int i = 0; i < count - 1; i++ ) {
+            thumbnails.add( (ThumbnailView) getChildAt( i ) );
         }
 
         return thumbnails;
     }
 
     private void addPhoto( @NonNull File file, boolean animated ) {
-        if ( images.getChildCount() == 0 ) {
-            images.setVisibility( VISIBLE );
-        }
-
         ThumbnailView thumbnail = addPlaceholder();
 
         if ( animated ) {
@@ -363,11 +318,7 @@ public class GalleryView extends LinearLayout implements OnClickListener {
                             .withEndAction( new Runnable() {
                                 @Override
                                 public void run() {
-                                    images.removeView( finalSelection );
-
-                                    if ( images.getChildCount() == 0 ) {
-                                        images.setVisibility( GONE );
-                                    }
+                                    removeView( finalSelection );
                                 }
                             } ).start();
 
@@ -375,12 +326,23 @@ public class GalleryView extends LinearLayout implements OnClickListener {
         }
     }
 
+    private ImageButton addButton() {
+        ImageButton button = (ImageButton) LayoutInflater.from( getContext() )
+                        .inflate( R.layout.gallery_add_photo, this, false );
+        button.setOnClickListener( this );
+        addView( button, getThumbnailWidth(), getThumbnailHeight() );
+        return button;
+    }
+
     @NonNull
     private ThumbnailView addPlaceholder() {
         ThumbnailView thumbnail = new ThumbnailView( getContext() );
         thumbnail.setBackgroundColor( getThumbnailBackgroundColor() );
 
-        images.addView( thumbnail, getThumbnailWidth(), getThumbnailHeight() );
+        LayoutParams params = new LayoutParams(
+            getThumbnailWidth(),
+            getThumbnailHeight() );
+        addView( thumbnail, getChildCount() - 1, params );
 
         return thumbnail;
     }
