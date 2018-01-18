@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2
+
+_2018-01-18_
+
+ * Add `OnPhotoAddedListener` and `OnPhotoRemovedListener`
+
 ## 1.2.1
 
 _2018-01-18_
