@@ -5,7 +5,7 @@
            parent="AppTheme.Base" />
 
     <style name="AppTheme.Base"
-           parent="Theme.AppCompat">
+           parent="Theme.AppCompat.Light">
 
         <item name="colorPrimary">#2196f3</item>
         <item name="colorPrimaryDark">#ffab40</item>

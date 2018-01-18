@@ -6,6 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:contentDescription="@string/gallery_add_photo"
-    android:tint="?android:textColorPrimary"
+    android:tint="?android:textColorPrimaryInverse"
     app:backgroundTint="?colorPrimary"
     app:srcCompat="@drawable/gallery_ic_add_photo" />
