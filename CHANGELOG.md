@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1
+
+_2018-01-18_
+
+ * Add subtle elevation to add photo button
+ * Set add photo button icon color to `textColorPrimaryInverse`
+
 ## 1.2.0
 
 _2018-01-17_
