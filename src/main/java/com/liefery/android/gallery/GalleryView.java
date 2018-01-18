@@ -81,7 +81,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         TypedArray styles = context
                         .obtainStyledAttributes( R.styleable.GalleryView );
         initialize( styles );
-        styles.recycle();
     }
 
     public GalleryView( Context context, AttributeSet attrs ) {
@@ -91,7 +90,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
             attrs,
             R.styleable.GalleryView );
         initialize( styles );
-        styles.recycle();
     }
 
     public GalleryView( Context context, AttributeSet attrs, int defStyleAttr ) {
@@ -103,7 +101,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
             defStyleAttr,
             0 );
         initialize( styles );
-        styles.recycle();
     }
 
     private void initialize( @NonNull TypedArray styles ) {
@@ -149,6 +146,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         }
 
         addButton();
+
+        styles.recycle();
     }
 
     public void setThumbnailBackgroundColor( @ColorInt int color ) {

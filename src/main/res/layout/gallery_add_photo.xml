@@ -5,7 +5,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:contentDescription="@string/gallery_add_photo"
     android:tint="?android:textColorPrimaryInverse"
+    android:translationX="-4dp"
+    android:elevation="4dp"
     app:backgroundTint="?colorPrimary"
-    app:srcCompat="@drawable/gallery_ic_add_photo" />
+    app:srcCompat="@drawable/gallery_ic_add_photo"
+    tools:ignore="UnusedAttribute" />
