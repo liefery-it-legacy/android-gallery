@@ -1,7 +1,7 @@
 package com.liefery.android.gallery;
 
+import android.Manifest;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -27,6 +28,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.io.File;
 import java.util.ArrayList;
 
+import static android.content.pm.PackageManager.PERMISSION_DENIED;
 import static com.google.android.flexbox.AlignContent.FLEX_START;
 import static com.google.android.flexbox.FlexWrap.WRAP;
 
@@ -137,7 +139,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         setThumbnailHeight( thumbnailHeight );
 
         FragmentManager fm = getFragmentManager( context );
-        Auxilery auxilery = (Auxilery) fm.findFragmentByTag( Auxilery.TAG );
+        PhotoAuxilery auxilery = (PhotoAuxilery) fm
+                        .findFragmentByTag( PhotoAuxilery.TAG );
 
         if ( auxilery != null ) {
             auxilery.setGalleryView( this );
@@ -195,10 +198,20 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         }
 
         Context context = getContext();
+
+        int permission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.WRITE_CALENDAR );
+
+        if ( permission == PERMISSION_DENIED ) {
+
+        }
+
         FragmentManager fragments = getFragmentManager( context );
 
-        Auxilery auxiliary = Auxilery.newInstance( this );
-        fragments.beginTransaction().add( auxiliary, Auxilery.TAG ).commit();
+        PhotoAuxilery auxiliary = PhotoAuxilery.newInstance( this );
+        fragments.beginTransaction().add( auxiliary, PhotoAuxilery.TAG )
+                        .commit();
         fragments.executePendingTransactions();
 
         Intent intent = new Intent( context, ActionActivity.class );
@@ -278,7 +291,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         return thumbnails;
     }
 
-    private void addPhoto( @NonNull File file, boolean animated ) {
+    void addPhoto( @NonNull File file, boolean animated ) {
         ThumbnailView thumbnail = addPlaceholder();
 
         if ( animated ) {
@@ -298,8 +311,10 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
             public void onClick( View view ) {
                 FragmentManager fm = getFragmentManager( context );
 
-                Auxilery auxiliary = Auxilery.newInstance( GalleryView.this );
-                fm.beginTransaction().add( auxiliary, Auxilery.TAG ).commit();
+                PhotoAuxilery auxiliary = PhotoAuxilery
+                                .newInstance( GalleryView.this );
+                fm.beginTransaction().add( auxiliary, PhotoAuxilery.TAG )
+                                .commit();
                 fm.executePendingTransactions();
 
                 Intent intent = new Intent( context, DetailActivity.class )
@@ -314,7 +329,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
             onPhotoAddedListener.onPhotoAdded( this, file );
     }
 
-    private boolean removePhoto( @NonNull File file ) {
+    boolean removePhoto( @NonNull File file ) {
         ArrayList<ThumbnailView> thumbnails = getThumbnailViews();
         ThumbnailView selection = null;
 
@@ -411,72 +426,5 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
 
     public interface OnPhotoRemovedListener {
         void onPhotoRemoved( GalleryView galley, File photo );
-    }
-
-    public static class Auxilery extends Fragment {
-        public static final String TAG = Auxilery.class.getCanonicalName();
-
-        private GalleryView galleryView;
-
-        public static Auxilery newInstance( GalleryView galleryView ) {
-            Auxilery auxilery = new Auxilery();
-            auxilery.setGalleryView( galleryView );
-            return auxilery;
-        }
-
-        public void setGalleryView( GalleryView galleryView ) {
-            this.galleryView = galleryView;
-        }
-
-        @Override
-        public void onActivityResult( int request, int result, Intent data ) {
-            super.onActivityResult( request, result, data );
-
-            if ( request != 421 ) {
-                Log.w( TAG, "Unexpected request code " + request );
-                return;
-            }
-
-            if ( result != Activity.RESULT_OK ) {
-                return;
-            }
-
-            if ( data == null ) {
-                Log.w( TAG, "Result data is null" );
-                return;
-            }
-
-            int event = data.getIntExtra( "event", -1 );
-
-            String path;
-            File file;
-
-            switch ( event ) {
-                case EVENT_SUCCESS:
-                    path = data.getStringExtra( "file" );
-                    file = new File( path );
-                    galleryView.addPhoto( file, true );
-                break;
-                case EVENT_CANCEL:
-                break;
-                case EVENT_ERROR:
-                break;
-                case EVENT_DELETE:
-                    path = data.getStringExtra( "file" );
-                    file = new File( path );
-                    galleryView.removePhoto( file );
-                break;
-                default:
-                    Log.w( TAG, "Received unknown event code " + event );
-                break;
-            }
-        }
-
-        @Override
-        public void onDestroyView() {
-            super.onDestroyView();
-
-            galleryView = null;
-        }
     }
 }
