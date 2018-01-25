@@ -30,7 +30,3 @@ dependencies {
     compile 'com.github.liefery:android-gallery:1.2.2'
 }
 ```
-
-## Usage
-
-Please have a look at the sample application (including runtime permission handling).

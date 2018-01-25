@@ -1,15 +1,15 @@
 package com.liefery.android.gallery;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import java.io.File;
 
 import static com.liefery.android.gallery.GalleryView.*;
 
-class PhotoAuxilery extends Fragment {
+public class PhotoAuxilery extends Fragment {
     public static final String TAG = PhotoAuxilery.class.getCanonicalName();
 
     private GalleryView galleryView;
@@ -66,6 +66,13 @@ class PhotoAuxilery extends Fragment {
                 Log.w( TAG, "Received unknown event code " + event );
             break;
         }
+
+        destroy();
+    }
+
+    private void destroy() {
+        getActivity().getSupportFragmentManager().beginTransaction()
+                        .remove( this ).commit();
     }
 
     @Override

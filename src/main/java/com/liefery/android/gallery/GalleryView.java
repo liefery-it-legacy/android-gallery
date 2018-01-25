@@ -1,8 +1,6 @@
 package com.liefery.android.gallery;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -14,7 +12,8 @@ import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -28,7 +27,6 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.io.File;
 import java.util.ArrayList;
 
-import static android.content.pm.PackageManager.PERMISSION_DENIED;
 import static com.google.android.flexbox.AlignContent.FLEX_START;
 import static com.google.android.flexbox.FlexWrap.WRAP;
 
@@ -57,7 +55,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     @NonNull
     private static FragmentManager getFragmentManager( Context context ) {
         if ( context instanceof Activity ) {
-            return ( (Activity) context ).getFragmentManager();
+            return ( (FragmentActivity) context ).getSupportFragmentManager();
         } else {
             throw new IllegalStateException( "Not a valid host" );
         }
@@ -68,8 +66,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     private int thumbnailWidth;
 
     private int thumbnailHeight;
-
-    private OnTakePhotoListener onTakePhotoListener;
 
     private OnPhotoAddedListener onPhotoAddedListener;
 
@@ -139,11 +135,19 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         setThumbnailHeight( thumbnailHeight );
 
         FragmentManager fm = getFragmentManager( context );
-        PhotoAuxilery auxilery = (PhotoAuxilery) fm
+
+        PermissionAuxilery permissionAuxilery = (PermissionAuxilery) fm
+                        .findFragmentByTag( PermissionAuxilery.TAG );
+
+        if ( permissionAuxilery != null ) {
+            permissionAuxilery.setGalleryView( this );
+        }
+
+        PhotoAuxilery photoAuxilery = (PhotoAuxilery) fm
                         .findFragmentByTag( PhotoAuxilery.TAG );
 
-        if ( auxilery != null ) {
-            auxilery.setGalleryView( this );
+        if ( photoAuxilery != null ) {
+            photoAuxilery.setGalleryView( this );
         }
 
         addButton();
@@ -192,30 +196,27 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         takePhoto();
     }
 
-    public void takePhoto() {
-        if ( onTakePhotoListener != null && !onTakePhotoListener.onTakePhoto() ) {
+    void takePhoto() {
+        Context context = getContext();
+        FragmentManager manager = getFragmentManager( context );
+
+        if ( !PermissionAuxilery.hasPermissions( context ) ) {
+            PermissionAuxilery permissionAuxilery = PermissionAuxilery
+                            .newInstance( this );
+            manager.beginTransaction()
+                            .add( permissionAuxilery, PermissionAuxilery.TAG )
+                            .commit();
+            manager.executePendingTransactions();
             return;
         }
 
-        Context context = getContext();
-
-        int permission = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.WRITE_CALENDAR );
-
-        if ( permission == PERMISSION_DENIED ) {
-
-        }
-
-        FragmentManager fragments = getFragmentManager( context );
-
-        PhotoAuxilery auxiliary = PhotoAuxilery.newInstance( this );
-        fragments.beginTransaction().add( auxiliary, PhotoAuxilery.TAG )
+        PhotoAuxilery photoAuxiliary = PhotoAuxilery.newInstance( this );
+        manager.beginTransaction().add( photoAuxiliary, PhotoAuxilery.TAG )
                         .commit();
-        fragments.executePendingTransactions();
+        manager.executePendingTransactions();
 
         Intent intent = new Intent( context, ActionActivity.class );
-        auxiliary.startActivityForResult( intent, 421 );
+        photoAuxiliary.startActivityForResult( intent, 421 );
     }
 
     @NonNull
@@ -248,15 +249,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         }
 
         return paths;
-    }
-
-    @Nullable
-    public OnTakePhotoListener getOnTakePhotoListener() {
-        return onTakePhotoListener;
-    }
-
-    public void setOnTakePhotoListener( @Nullable OnTakePhotoListener listener ) {
-        this.onTakePhotoListener = listener;
     }
 
     @Nullable
@@ -309,13 +301,13 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         OnClickListener onClick = new OnClickListener() {
             @Override
             public void onClick( View view ) {
-                FragmentManager fm = getFragmentManager( context );
+                FragmentManager manager = getFragmentManager( context );
 
                 PhotoAuxilery auxiliary = PhotoAuxilery
                                 .newInstance( GalleryView.this );
-                fm.beginTransaction().add( auxiliary, PhotoAuxilery.TAG )
+                manager.beginTransaction().add( auxiliary, PhotoAuxilery.TAG )
                                 .commit();
-                fm.executePendingTransactions();
+                manager.executePendingTransactions();
 
                 Intent intent = new Intent( context, DetailActivity.class )
                                 .putExtra( "file", path );
@@ -414,10 +406,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         } else {
             super.onRestoreInstanceState( state );
         }
-    }
-
-    public interface OnTakePhotoListener {
-        boolean onTakePhoto();
     }
 
     public interface OnPhotoAddedListener {
