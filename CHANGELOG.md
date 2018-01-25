@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+_2018-01-25_
+
+ * Integrate runtime permission handling into library core
+
 ## 1.2.2
 
 _2018-01-18_
