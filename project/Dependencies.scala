@@ -8,7 +8,7 @@ object Dependencies {
         .exclude( "com.android.support", "recyclerview-v7" )
         .exclude( "com.android.support", "support-compat" )
 
-    val glide = ( "com.github.bumptech.glide" % "glide" % "4.3.1" )
+    val glide = ( "com.github.bumptech.glide" % "glide" % "4.7.1" )
         .exclude( "com.android.support", "support-annotations" )
 
     val photoView = ( "com.github.chrisbanes" % "PhotoView" % "2.1.3" )
