@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.1
+
+_2018-04-26_
+
+ * Fix crash on old API levels due to missing 'app' xml prefix
+
 ## 1.4.0
 
 _2018-04-24_
