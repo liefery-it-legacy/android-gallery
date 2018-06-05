@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.2
+
+_2018-06-05_
+
+ * Upgrade to scala 2.11.12
+ * Upgrade to flexbox 1.0.0
+
 ## 1.4.1
 
 _2018-04-26_
