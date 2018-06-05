@@ -4,7 +4,7 @@ object Dependencies {
     val easyImage = ( "com.github.jkwiecien" % "EasyImage" % "2.0.4" )
         .exclude( "com.android.support", "appcompat-v7" )
 
-    val flexbox = ( "com.google.android" % "flexbox" % "0.3.2" )
+    val flexbox = ( "com.google.android" % "flexbox" % "1.0.0" )
         .exclude( "com.android.support", "recyclerview-v7" )
         .exclude( "com.android.support", "support-compat" )
 
