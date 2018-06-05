@@ -12,7 +12,7 @@ object Settings {
         minSdkVersion := "16",
         organization := "com.liefery.android",
         platformTarget := "android-27",
-        scalaVersion := "2.11.11",
+        scalaVersion := "2.11.12",
         targetSdkVersion := "27"
     )
 }
