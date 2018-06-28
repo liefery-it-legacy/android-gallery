@@ -29,13 +29,7 @@ public class ActionActivityResultHandler {
     public File getFile() {
         String path = data.getStringExtra( "file" );
 
-        if ( path == null ) {
-            // Return null instead of File throwing NullPointerException
-            return null;
-        } else {
-            File file = new File( path );
-            return file;
-        }
+        return path == null ? null : new File( path );
     }
 
     public boolean isSuccess() {

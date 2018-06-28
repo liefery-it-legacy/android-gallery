@@ -52,11 +52,11 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
         int type ) {
 
         if ( files.size() > 0 ) {
+
             File file = files.get( 0 );
 
-            Intent intent = createIntent( EVENT_SUCCESS ).putExtra(
-                "file",
-                file.getAbsolutePath() );
+            IOException rotationException = null;
+            Intent intent;
 
             // Samsung treatment <3
             //  - Images are not rotated properly
@@ -66,8 +66,18 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
                 try {
                     rotateImageIfNecessary( file );
                 } catch ( IOException exception ) {
-                    intent.putExtra( "error", (Serializable) exception );
+                    rotationException = exception;
                 }
+            }
+
+            if ( rotationException != null ) {
+                intent = createIntent( EVENT_ERROR ).putExtra(
+                    "error",
+                    (Serializable) rotationException );
+            } else {
+                intent = createIntent( EVENT_SUCCESS ).putExtra(
+                    "file",
+                    file.getAbsolutePath() );
             }
 
             setResult( RESULT_OK, intent );
