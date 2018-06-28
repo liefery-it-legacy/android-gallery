@@ -50,21 +50,38 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
         @NonNull List<File> files,
         ImageSource source,
         int type ) {
+
         if ( files.size() > 0 ) {
+
             File file = files.get( 0 );
+
+            IOException rotationException = null;
+            Intent intent;
 
             // Samsung treatment <3
             //  - Images are not rotated properly
             //    https://github.com/jkwiecien/EasyImage/issues/43
             //  - Rotating a full resolution image may cause out of memory exceptions
             if ( source == ImageSource.CAMERA ) {
-                rotateImageIfNecessary( file );
+                try {
+                    rotateImageIfNecessary( file );
+                } catch ( IOException exception ) {
+                    rotationException = exception;
+                }
             }
 
-            Intent intent = createIntent( EVENT_SUCCESS ).putExtra(
-                "file",
-                file.getAbsolutePath() );
+            if ( rotationException != null ) {
+                intent = createIntent( EVENT_ERROR ).putExtra(
+                    "error",
+                    (Serializable) rotationException );
+            } else {
+                intent = createIntent( EVENT_SUCCESS ).putExtra(
+                    "file",
+                    file.getAbsolutePath() );
+            }
+
             setResult( RESULT_OK, intent );
+
         } else {
             setResult( RESULT_CANCELED );
         }
@@ -72,7 +89,7 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
         finish();
     }
 
-    private void rotateImageIfNecessary( File file ) {
+    private void rotateImageIfNecessary( File file ) throws IOException {
         FileInputStream input = null;
         FileOutputStream output = null;
         int orientation;
@@ -82,19 +99,9 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
             input = new FileInputStream( file );
             ImageHeaderParser parser = new ImageHeaderParser( input );
             orientation = parser.getOrientation();
-        } catch ( FileNotFoundException exception ) {
-            Log.w( TAG, "Tried to open image file, but was not found" );
-            return;
-        } catch ( IOException exception ) {
-            Log.w( TAG, "Failed to parse EXIF data from image file" );
-            return;
         } finally {
             if ( input != null ) {
-                try {
-                    input.close();
-                } catch ( IOException exception ) {
-                    Log.e( TAG, "Failed to close Stream", exception );
-                }
+                input.close();
             }
         }
 
@@ -137,16 +144,11 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
             try {
                 output = new FileOutputStream( file );
                 result.compress( Bitmap.CompressFormat.JPEG, 100, output );
-            } catch ( FileNotFoundException exception ) {
-                Log.w( TAG, "Tried to open image file, but was not found" );
             } finally {
                 result.recycle();
 
                 if ( output != null ) {
-                    try {
-                        output.close();
-                    } catch ( IOException e ) {
-                    }
+                    output.close();
                 }
             }
         }
@@ -158,6 +160,7 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
         ImageSource source,
         int type ) {
         Intent intent = createIntent( EVENT_ERROR );
+        intent.putExtra( "error", (Serializable) exception );
         setResult( RESULT_OK, intent );
         finish();
     }

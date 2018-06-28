@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import java.io.File;
-
 import static com.liefery.android.gallery.GalleryView.*;
 
 public class PhotoAuxilery extends Fragment {
@@ -42,25 +40,21 @@ public class PhotoAuxilery extends Fragment {
             return;
         }
 
-        int event = data.getIntExtra( "event", -1 );
+        ActionActivityResultHandler resultHandler = new ActionActivityResultHandler(
+            data );
 
-        String path;
-        File file;
+        int event = resultHandler.getEvent();
 
         switch ( event ) {
             case EVENT_SUCCESS:
-                path = data.getStringExtra( "file" );
-                file = new File( path );
-                galleryView.addPhoto( file, true );
+                galleryView.addPhoto( resultHandler.getFile(), true );
             break;
             case EVENT_CANCEL:
             break;
             case EVENT_ERROR:
             break;
             case EVENT_DELETE:
-                path = data.getStringExtra( "file" );
-                file = new File( path );
-                galleryView.removePhoto( file );
+                galleryView.removePhoto( resultHandler.getFile() );
             break;
             default:
                 Log.w( TAG, "Received unknown event code " + event );
