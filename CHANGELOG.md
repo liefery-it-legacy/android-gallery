@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.0
+
+_2018-06-28_
+
+ * Introduce `ResultHandler` to improve usage of `ActionActivity` directly
+
 ## 1.4.2
 
 _2018-06-05_
