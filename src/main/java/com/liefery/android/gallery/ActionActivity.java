@@ -52,11 +52,9 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
         int type ) {
 
         if ( files.size() > 0 ) {
-
             File file = files.get( 0 );
 
-            IOException rotationException = null;
-            Intent intent;
+            Intent intent = null;
 
             // Samsung treatment <3
             //  - Images are not rotated properly
@@ -65,28 +63,63 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
             if ( source == ImageSource.CAMERA ) {
                 try {
                     rotateImageIfNecessary( file );
+                    file = moveImageToInternalStorage( file );
+                    intent = createIntent( EVENT_SUCCESS ).putExtra(
+                        "file",
+                        file.getAbsolutePath() );
                 } catch ( IOException exception ) {
-                    rotationException = exception;
+                    intent = createIntent( EVENT_ERROR ).putExtra(
+                        "error",
+                        (Serializable) exception );
                 }
-            }
-
-            if ( rotationException != null ) {
-                intent = createIntent( EVENT_ERROR ).putExtra(
-                    "error",
-                    (Serializable) rotationException );
             } else {
-                intent = createIntent( EVENT_SUCCESS ).putExtra(
+                createIntent( EVENT_SUCCESS ).putExtra(
                     "file",
                     file.getAbsolutePath() );
             }
 
             setResult( RESULT_OK, intent );
-
         } else {
             setResult( RESULT_CANCELED );
         }
 
         finish();
+    }
+
+    private File getPhotosDir() {
+        File target = new File( getFilesDir(), "photos" );
+        if ( !target.exists() )
+            target.mkdirs();
+        return target;
+    }
+
+    private File moveImageToInternalStorage( File file ) throws IOException {
+        File target = new File( getPhotosDir(), file.getName() );
+
+        FileInputStream input = null;
+        FileOutputStream output = null;
+
+        try {
+            input = new FileInputStream( file );
+            output = new FileOutputStream( target );
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ( ( read = input.read( buffer ) ) != -1 ) {
+                output.write( buffer, 0, read );
+            }
+
+            output.flush();
+
+            file.delete();
+
+            return target;
+        } finally {
+            if ( input != null )
+                input.close();
+            if ( output != null )
+                input.close();
+        }
     }
 
     private void rotateImageIfNecessary( File file ) throws IOException {
