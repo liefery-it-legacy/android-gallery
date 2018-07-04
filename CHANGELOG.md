@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.1
+
+_2018-07-04_
+
+ * Move images to internal app storage after taking a photo
+ * Upgrade to photo-view 2.1.4
+
 ## 1.5.0
 
 _2018-06-28_
