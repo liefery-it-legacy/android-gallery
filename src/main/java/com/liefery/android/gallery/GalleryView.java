@@ -71,6 +71,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
 
     private OnPhotoRemovedListener onPhotoRemovedListener;
 
+    private OnPhotoErrorListener onPhotoErrorListener;
+
     public GalleryView( Context context ) {
         super( context );
 
@@ -271,6 +273,16 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         this.onPhotoRemovedListener = onPhotoRemovedListener;
     }
 
+    @Nullable
+    public OnPhotoErrorListener getOnPhotoErrorListener() {
+        return onPhotoErrorListener;
+    }
+
+    public void setOnPhotoErrorListener(
+        @Nullable OnPhotoErrorListener onPhotoErrorListener ) {
+        this.onPhotoErrorListener = onPhotoErrorListener;
+    }
+
     @NonNull
     private ArrayList<ThumbnailView> getThumbnailViews() {
         int count = getChildCount();
@@ -414,5 +426,9 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
 
     public interface OnPhotoRemovedListener {
         void onPhotoRemoved( GalleryView galley, File photo );
+    }
+
+    public interface OnPhotoErrorListener {
+        void onPhotoError( Throwable throwable );
     }
 }

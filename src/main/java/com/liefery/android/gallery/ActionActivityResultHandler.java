@@ -1,6 +1,7 @@
 package com.liefery.android.gallery;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.io.File;
 
@@ -12,7 +13,7 @@ public class ActionActivityResultHandler {
 
     final private Intent data;
 
-    public ActionActivityResultHandler( @Nullable Intent data ) {
+    public ActionActivityResultHandler( @NonNull Intent data ) {
         this.data = data;
     }
 
@@ -28,7 +29,6 @@ public class ActionActivityResultHandler {
     @Nullable
     public File getFile() {
         String path = data.getStringExtra( "file" );
-
         return path == null ? null : new File( path );
     }
 

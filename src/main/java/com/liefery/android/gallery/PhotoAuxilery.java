@@ -52,6 +52,10 @@ public class PhotoAuxilery extends Fragment {
             case EVENT_CANCEL:
             break;
             case EVENT_ERROR:
+                OnPhotoErrorListener listener = galleryView
+                                .getOnPhotoErrorListener();
+                if ( listener != null )
+                    listener.onPhotoError( resultHandler.getError() );
             break;
             case EVENT_DELETE:
                 galleryView.removePhoto( resultHandler.getFile() );
