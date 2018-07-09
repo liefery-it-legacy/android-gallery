@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.2
+
+_2018-07-09_
+
+ * Add new `OnPhotoErrorListener`
+
 ## 1.5.1
 
 _2018-07-04_
