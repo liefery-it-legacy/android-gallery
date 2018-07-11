@@ -33,7 +33,8 @@ public class PermissionAuxilery extends Fragment {
     public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
 
-        checkPermissions();
+        if ( state == null )
+            checkPermissions();
     }
 
     @Override
@@ -48,12 +49,12 @@ public class PermissionAuxilery extends Fragment {
             return;
         }
 
-        if ( results.length != 1 ) {
+        if ( results.length != 2 ) {
             Log.w( TAG, "Unexpected permission results" );
             return;
         }
 
-        if ( results[0] == PERMISSION_DENIED ) {
+        if ( results[0] == PERMISSION_DENIED || results[1] == PERMISSION_DENIED ) {
             Toast.makeText(
                 getActivity(),
                 "Accept permission to take a photo",
@@ -68,14 +69,17 @@ public class PermissionAuxilery extends Fragment {
     static boolean hasPermissions( Context context ) {
         return ContextCompat.checkSelfPermission(
             context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE ) == PERMISSION_GRANTED;
+            Manifest.permission.WRITE_EXTERNAL_STORAGE ) == PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA ) == PERMISSION_GRANTED;
     }
 
     private void checkPermissions() {
         if ( !hasPermissions( getActivity() ) ) {
-            requestPermissions(
-                new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },
-                420 );
+            requestPermissions( new String[] {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA }, 420 );
         } else {
             galleryView.takePhoto();
             destroy();
