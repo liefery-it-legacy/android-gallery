@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.3
+
+_2018-07-11_
+
+ * Add camera permission and runtime handling
+
 ## 1.5.2
 
 _2018-07-09_
