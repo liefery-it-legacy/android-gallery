@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-    val easyImage = ( "com.github.jkwiecien" % "EasyImage" % "2.0.4" )
+    val easyImage = ( "com.github.jkwiecien" % "EasyImage" % "2.1.0" )
         .exclude( "com.android.support", "appcompat-v7" )
 
     val flexbox = ( "com.google.android" % "flexbox" % "1.0.0" )

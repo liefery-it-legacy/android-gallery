@@ -34,7 +34,7 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
         super.onCreate( state );
 
         if ( state == null ) {
-            EasyImage.openCamera( this, 0 );
+            EasyImage.openCameraForImage( this, 0 );
         }
     }
 
@@ -60,7 +60,7 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
             //  - Images are not rotated properly
             //    https://github.com/jkwiecien/EasyImage/issues/43
             //  - Rotating a full resolution image may cause out of memory exceptions
-            if ( source == ImageSource.CAMERA ) {
+            if ( source == ImageSource.CAMERA_IMAGE ) {
                 try {
                     rotateImageIfNecessary( file );
                     file = moveImageToInternalStorage( file );
