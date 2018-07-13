@@ -9,9 +9,15 @@
     android:clipToPadding="false"
     android:padding="16dp">
 
-    <com.liefery.android.gallery.GalleryView
+    <fragment
         android:id="@+id/gallery"
+        android:name="com.liefery.android.gallery.GalleryFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <!--<com.liefery.android.gallery.GalleryView-->
+        <!--android:id="@+id/gallery"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
 
 </LinearLayout>

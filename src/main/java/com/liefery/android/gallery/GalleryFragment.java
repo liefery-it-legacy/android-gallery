@@ -3,41 +3,38 @@ package com.liefery.android.gallery;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import static com.liefery.android.gallery.GalleryView.*;
 
-public class PhotoAuxilery extends Fragment {
-    public static final String TAG = PhotoAuxilery.class.getCanonicalName();
-
-    //    private GalleryView galleryView;
-
-    public static PhotoAuxilery newInstance() {
-        PhotoAuxilery auxilery = new PhotoAuxilery();
-        //        auxilery.setGalleryView( galleryView );
-        return auxilery;
-    }
-
-    public void setGalleryView( GalleryView galleryView ) {
-        //        this.galleryView = galleryView;
+public class GalleryFragment extends Fragment {
+    @Nullable
+    @Override
+    public View onCreateView(
+        @NonNull LayoutInflater inflater,
+        @Nullable ViewGroup container,
+        @Nullable Bundle savedInstanceState ) {
+        return new GalleryView( getContext() );
     }
 
     @Override
-    public void onCreate( @Nullable Bundle savedInstanceState ) {
-        super.onCreate( savedInstanceState );
-
-        setRetainInstance( true );
-
-        Log.wtf( "WTF", "AUXILERY ON CREATE" );
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        Log.wtf( "WTF", "AUXILERY ON DESTROY" );
+    public void onViewCreated(
+        @NonNull View view,
+        @Nullable Bundle savedInstanceState ) {
+        GalleryView gallery = (GalleryView) view;
+        gallery.setOnClickTakePhotoListener( new View.OnClickListener() {
+            @Override
+            public void onClick( View v ) {
+                takePhoto();
+            }
+        } );
     }
 
     @Override
@@ -65,6 +62,9 @@ public class PhotoAuxilery extends Fragment {
 
         switch ( event ) {
             case EVENT_SUCCESS:
+                ( (GalleryView) getView() ).addPhoto(
+                    resultHandler.getFile(),
+                    true );
             //                galleryView.addPhoto( resultHandler.getFile(), true );
             break;
             case EVENT_CANCEL:
@@ -82,19 +82,10 @@ public class PhotoAuxilery extends Fragment {
                 Log.w( TAG, "Received unknown event code " + event );
             break;
         }
-
-        destroy();
     }
 
-    private void destroy() {
-        getActivity().getSupportFragmentManager().beginTransaction()
-                        .remove( this ).commit();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        //        galleryView = null;
+    private void takePhoto() {
+        Intent intent = new Intent( getContext(), ActionActivity.class );
+        startActivityForResult( intent, 421 );
     }
 }

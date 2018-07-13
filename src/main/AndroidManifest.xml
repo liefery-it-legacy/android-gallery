@@ -18,6 +18,10 @@
             android:name=".DetailActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
+        <activity
+            android:name=".PhotoAux2"
+            android:noHistory="true" />
+
     </application>
 
 </manifest>

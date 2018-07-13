@@ -60,7 +60,7 @@ public class PermissionAuxilery extends Fragment {
                 "Accept permission to take a photo",
                 Toast.LENGTH_LONG ).show();
         } else {
-            galleryView.takePhoto();
+            //galleryView.takePhoto();
         }
 
         destroy();
@@ -81,7 +81,7 @@ public class PermissionAuxilery extends Fragment {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA }, 420 );
         } else {
-            galleryView.takePhoto();
+            //galleryView.takePhoto();
             destroy();
         }
     }
