@@ -1,26 +1,15 @@
 package com.liefery.android.gallery;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import com.google.android.flexbox.FlexboxLayout;
 
@@ -31,36 +20,6 @@ import static com.google.android.flexbox.AlignContent.FLEX_START;
 import static com.google.android.flexbox.FlexWrap.WRAP;
 
 public class GalleryView extends FlexboxLayout {
-    public static final String TAG = GalleryView.class.getCanonicalName();
-
-    public static final String ACTION = TAG + ".action";
-
-    public static final int EVENT_SUCCESS = 0;
-
-    public static final int EVENT_CANCEL = 1;
-
-    public static final int EVENT_ERROR = 2;
-
-    public static final int EVENT_DELETE = 3;
-
-    @NonNull
-    public static Intent createIntent( int event ) {
-        return new Intent().setAction( ACTION ).putExtra( "event", event );
-    }
-
-    private static int dpToPx( int dp ) {
-        return (int) ( dp * Resources.getSystem().getDisplayMetrics().density );
-    }
-
-    @NonNull
-    private static FragmentManager getFragmentManager( Context context ) {
-        if ( context instanceof Activity ) {
-            return ( (FragmentActivity) context ).getSupportFragmentManager();
-        } else {
-            throw new IllegalStateException( "Not a valid host" );
-        }
-    }
-
     private int thumbnailBackgroundColor;
 
     private int thumbnailWidth;
@@ -122,7 +81,7 @@ public class GalleryView extends FlexboxLayout {
             Color.GRAY );
         setThumbnailBackgroundColor( thumbnailBackgroundColor );
 
-        int thumbnailDefaultSize = dpToPx( 80 );
+        int thumbnailDefaultSize = Util.dpToPx( 80 );
 
         int thumbnailWidth = styles.getDimensionPixelSize(
             R.styleable.GalleryView_gallery_thumbnailWidth,
@@ -175,38 +134,6 @@ public class GalleryView extends FlexboxLayout {
         return thumbnailHeight;
     }
 
-    @NonNull
-    public ArrayList<File> getImages() {
-        int count = getChildCount();
-        ArrayList<File> files = new ArrayList<>();
-
-        for ( int i = 0; i < count - 1; i++ ) {
-            File file = ( (ThumbnailView) getChildAt( i ) ).getFile();
-
-            if ( file != null ) {
-                files.add( file );
-            }
-        }
-
-        return files;
-    }
-
-    @NonNull
-    public ArrayList<String> getPaths() {
-        int count = getChildCount();
-        ArrayList<String> paths = new ArrayList<>();
-
-        for ( int i = 0; i < count - 1; i++ ) {
-            File file = ( (ThumbnailView) getChildAt( i ) ).getFile();
-
-            if ( file != null ) {
-                paths.add( file.getAbsolutePath() );
-            }
-        }
-
-        return paths;
-    }
-
     public void setOnClickTakePhotoListener(
         OnClickListener onClickTakePhotoListener ) {
         if ( takePhotoButton != null )
@@ -250,7 +177,7 @@ public class GalleryView extends FlexboxLayout {
         thumbnail.load( file );
     }
 
-    public boolean removePhoto( @NonNull File file ) {
+    public void removePhoto( @NonNull File file ) {
         ArrayList<ThumbnailView> thumbnails = getThumbnailViews();
         ThumbnailView selection = null;
 
@@ -264,8 +191,8 @@ public class GalleryView extends FlexboxLayout {
         }
 
         if ( selection == null ) {
-            Log.w( TAG, "Deleted file is not present in gallery" );
-            return false;
+            // Log.w( TAG, "Deleted file is not present in gallery" );
+            //            return false;
         } else {
             final ThumbnailView finalSelection = selection;
 
@@ -277,8 +204,8 @@ public class GalleryView extends FlexboxLayout {
                                     removeView( finalSelection );
                                 }
                             } ).start();
-
-            return true;
+            //
+            //            return true;
         }
     }
 
@@ -300,36 +227,5 @@ public class GalleryView extends FlexboxLayout {
         addView( thumbnail, getChildCount() - 1, params );
 
         return thumbnail;
-    }
-
-    @Override
-    public Parcelable onSaveInstanceState() {
-        Bundle bundle = new Bundle( 5 );
-        bundle.putParcelable( "state", super.onSaveInstanceState() );
-        bundle.putInt(
-            "thumbnail-background-color",
-            getThumbnailBackgroundColor() );
-        bundle.putInt( "thumbnail-width", getThumbnailWidth() );
-        bundle.putInt( "thumbnail-height", getThumbnailHeight() );
-        bundle.putStringArrayList( "files", getPaths() );
-        return bundle;
-    }
-
-    @Override
-    public void onRestoreInstanceState( Parcelable state ) {
-        if ( state instanceof Bundle ) {
-            Bundle bundle = (Bundle) state;
-            super.onRestoreInstanceState( bundle.getParcelable( "state" ) );
-            setThumbnailBackgroundColor( bundle
-                            .getInt( "thumbnail-background-color" ) );
-            setThumbnailWidth( bundle.getInt( "thumbnail-width" ) );
-            setThumbnailHeight( bundle.getInt( "thumbnail-height" ) );
-            ArrayList<String> files = bundle.getStringArrayList( "files" );
-            for ( String file : files ) {
-                addPhoto( new File( file ), false );
-            }
-        } else {
-            super.onRestoreInstanceState( state );
-        }
     }
 }

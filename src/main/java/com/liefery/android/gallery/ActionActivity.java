@@ -18,7 +18,10 @@ import java.util.List;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_180;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_270;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_90;
-import static com.liefery.android.gallery.GalleryView.*;
+import static com.liefery.android.gallery.GalleryFragment.EVENT_CANCEL;
+import static com.liefery.android.gallery.GalleryFragment.EVENT_ERROR;
+import static com.liefery.android.gallery.GalleryFragment.EVENT_SUCCESS;
+import static com.liefery.android.gallery.Util.createIntent;
 
 public class ActionActivity extends Activity implements EasyImage.Callbacks {
     public static final String TAG = ActionActivity.class.getCanonicalName();

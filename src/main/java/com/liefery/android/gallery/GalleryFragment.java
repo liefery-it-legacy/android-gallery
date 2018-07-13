@@ -15,12 +15,27 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.liefery.android.gallery.GalleryView.*;
 
 public class GalleryFragment extends Fragment {
+    public static final String TAG = GalleryFragment.class.getCanonicalName();
+
+    public static final String ACTION = TAG + ".action";
+
+    public static final int EVENT_SUCCESS = 0;
+
+    public static final int EVENT_CANCEL = 1;
+
+    public static final int EVENT_ERROR = 2;
+
+    public static final int EVENT_DELETE = 3;
+
+    private ArrayList<File> images = new ArrayList<>();
+
     private OnPhotoAddedListener onPhotoAddedListener;
 
     private OnPhotoRemovedListener onPhotoRemovedListener;
@@ -40,6 +55,22 @@ public class GalleryFragment extends Fragment {
     public void setOnPhotoErrorListener(
         OnPhotoErrorListener onPhotoErrorListener ) {
         this.onPhotoErrorListener = onPhotoErrorListener;
+    }
+
+    @NonNull
+    public ArrayList<File> getImages() {
+        return new ArrayList<>( images );
+    }
+
+    @NonNull
+    public ArrayList<String> getPaths() {
+        ArrayList<String> paths = new ArrayList<>();
+
+        for ( File file : images ) {
+            paths.add( file.getAbsolutePath() );
+        }
+
+        return paths;
     }
 
     @Nullable
@@ -70,6 +101,19 @@ public class GalleryFragment extends Fragment {
                     openDetails( file );
             }
         } );
+
+        if ( savedInstanceState != null ) {
+            ArrayList<String> images = savedInstanceState
+                            .getStringArrayList( "images" );
+
+            if ( images != null ) {
+                for ( String image : images ) {
+                    File file = new File( image );
+                    this.images.add( file );
+                    getView().addPhoto( file, false );
+                }
+            }
+        }
     }
 
     @Nullable
@@ -104,6 +148,7 @@ public class GalleryFragment extends Fragment {
 
         switch ( event ) {
             case EVENT_SUCCESS:
+                this.images.add( photo );
                 getView().addPhoto( photo, true );
 
                 if ( onPhotoAddedListener != null )
@@ -117,7 +162,7 @@ public class GalleryFragment extends Fragment {
                                     .onPhotoError( resultHandler.getError() );
             break;
             case EVENT_DELETE:
-                getView().removePhoto( photo );
+                getView().removePhoto( null );
 
                 if ( onPhotoRemovedListener != null )
                     onPhotoRemovedListener.onPhotoRemoved( photo );
@@ -182,6 +227,12 @@ public class GalleryFragment extends Fragment {
     private void openDetails( File file ) {
         Intent intent = DetailActivity.newInstance( getContext(), file );
         startActivityForResult( intent, 421 );
+    }
+
+    @Override
+    public void onSaveInstanceState( @NonNull Bundle outState ) {
+        super.onSaveInstanceState( outState );
+        outState.putStringArrayList( "images", getPaths() );
     }
 
     public interface OnPhotoAddedListener {

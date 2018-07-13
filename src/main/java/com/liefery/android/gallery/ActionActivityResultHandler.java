@@ -5,9 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.io.File;
 
-import static com.liefery.android.gallery.GalleryView.EVENT_CANCEL;
-import static com.liefery.android.gallery.GalleryView.EVENT_ERROR;
-import static com.liefery.android.gallery.GalleryView.EVENT_SUCCESS;
+import static com.liefery.android.gallery.GalleryFragment.EVENT_CANCEL;
+import static com.liefery.android.gallery.GalleryFragment.EVENT_ERROR;
+import static com.liefery.android.gallery.GalleryFragment.EVENT_SUCCESS;
 
 public class ActionActivityResultHandler {
 
