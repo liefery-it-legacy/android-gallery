@@ -56,13 +56,12 @@ class ThumbnailView extends FrameLayout {
         addView( image, MATCH_PARENT, MATCH_PARENT );
     }
 
-    public void load( @NonNull final File file, OnClickListener onClick ) {
+    public void load( @NonNull final File file ) {
         setTag( file );
 
         ViewGroup.LayoutParams params = getLayoutParams();
 
         setClickable( true );
-        setOnClickListener( onClick );
 
         Glide
                         .with( getContext() )
@@ -76,7 +75,6 @@ class ThumbnailView extends FrameLayout {
     public void clear() {
         setTag( null );
         setClickable( false );
-        setOnClickListener( null );
         image.setImageDrawable( null );
     }
 

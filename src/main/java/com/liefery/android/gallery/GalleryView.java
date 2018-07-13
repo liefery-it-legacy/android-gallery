@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import static com.google.android.flexbox.AlignContent.FLEX_START;
 import static com.google.android.flexbox.FlexWrap.WRAP;
 
-public class GalleryView extends FlexboxLayout implements OnClickListener {
+public class GalleryView extends FlexboxLayout {
     public static final String TAG = GalleryView.class.getCanonicalName();
 
     public static final String ACTION = TAG + ".action";
@@ -67,11 +67,9 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
 
     private int thumbnailHeight;
 
-    private OnPhotoAddedListener onPhotoAddedListener;
+    private OnClickListener onClickThumbnailListener;
 
-    private OnPhotoRemovedListener onPhotoRemovedListener;
-
-    private OnPhotoErrorListener onPhotoErrorListener;
+    private ImageButton takePhotoButton;
 
     public GalleryView( Context context ) {
         super( context );
@@ -136,23 +134,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
             thumbnailDefaultSize );
         setThumbnailHeight( thumbnailHeight );
 
-        FragmentManager fm = getFragmentManager( context );
-
-        PermissionAuxilery permissionAuxilery = (PermissionAuxilery) fm
-                        .findFragmentByTag( PermissionAuxilery.TAG );
-
-        if ( permissionAuxilery != null ) {
-            permissionAuxilery.setGalleryView( this );
-        }
-
-        PhotoAuxilery photoAuxilery = (PhotoAuxilery) fm
-                        .findFragmentByTag( PhotoAuxilery.TAG );
-
-        if ( photoAuxilery != null ) {
-            photoAuxilery.setGalleryView( this );
-        }
-
-        addButton();
+        takePhotoButton = addButton();
 
         styles.recycle();
     }
@@ -193,34 +175,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         return thumbnailHeight;
     }
 
-    @Override
-    public void onClick( View view ) {
-        takePhoto();
-    }
-
-    void takePhoto() {
-        Context context = getContext();
-        FragmentManager manager = getFragmentManager( context );
-
-        if ( !PermissionAuxilery.hasPermissions( context ) ) {
-            PermissionAuxilery permissionAuxilery = PermissionAuxilery
-                            .newInstance( this );
-            manager.beginTransaction()
-                            .add( permissionAuxilery, PermissionAuxilery.TAG )
-                            .commit();
-            manager.executePendingTransactions();
-            return;
-        }
-
-        PhotoAuxilery photoAuxiliary = PhotoAuxilery.newInstance( this );
-        manager.beginTransaction().add( photoAuxiliary, PhotoAuxilery.TAG )
-                        .commit();
-        manager.executePendingTransactions();
-
-        Intent intent = new Intent( context, ActionActivity.class );
-        photoAuxiliary.startActivityForResult( intent, 421 );
-    }
-
     @NonNull
     public ArrayList<File> getImages() {
         int count = getChildCount();
@@ -253,34 +207,19 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         return paths;
     }
 
-    @Nullable
-    public OnPhotoAddedListener getOnPhotoAddedListener() {
-        return onPhotoAddedListener;
+    public void setOnClickTakePhotoListener(
+        OnClickListener onClickTakePhotoListener ) {
+        if ( takePhotoButton != null )
+            this.takePhotoButton.setOnClickListener( onClickTakePhotoListener );
     }
 
-    public void setOnPhotoAddedListener(
-        @Nullable OnPhotoAddedListener onPhotoAddedListener ) {
-        this.onPhotoAddedListener = onPhotoAddedListener;
-    }
+    public void setOnClickThumbnailListener(
+        OnClickListener onClickThumbnailListener ) {
+        this.onClickThumbnailListener = onClickThumbnailListener;
 
-    @Nullable
-    public OnPhotoRemovedListener getOnPhotoRemovedListener() {
-        return onPhotoRemovedListener;
-    }
-
-    public void setOnPhotoRemovedListener(
-        @Nullable OnPhotoRemovedListener onPhotoRemovedListener ) {
-        this.onPhotoRemovedListener = onPhotoRemovedListener;
-    }
-
-    @Nullable
-    public OnPhotoErrorListener getOnPhotoErrorListener() {
-        return onPhotoErrorListener;
-    }
-
-    public void setOnPhotoErrorListener(
-        @Nullable OnPhotoErrorListener onPhotoErrorListener ) {
-        this.onPhotoErrorListener = onPhotoErrorListener;
+        for ( ThumbnailView view : getThumbnailViews() ) {
+            view.setOnClickListener( onClickThumbnailListener );
+        }
     }
 
     @NonNull
@@ -295,7 +234,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         return thumbnails;
     }
 
-    void addPhoto( @NonNull File file, boolean animated ) {
+    public void addPhoto( @NonNull File file, boolean animated ) {
         ThumbnailView thumbnail = addPlaceholder();
 
         if ( animated ) {
@@ -307,33 +246,11 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
                             .setStartDelay( 250 ).setDuration( 350 ).start();
         }
 
-        final Context context = getContext();
-        final String path = file.getAbsolutePath();
-
-        OnClickListener onClick = new OnClickListener() {
-            @Override
-            public void onClick( View view ) {
-                FragmentManager manager = getFragmentManager( context );
-
-                PhotoAuxilery auxiliary = PhotoAuxilery
-                                .newInstance( GalleryView.this );
-                manager.beginTransaction().add( auxiliary, PhotoAuxilery.TAG )
-                                .commit();
-                manager.executePendingTransactions();
-
-                Intent intent = new Intent( context, DetailActivity.class )
-                                .putExtra( "file", path );
-                auxiliary.startActivityForResult( intent, 421 );
-            }
-        };
-
-        thumbnail.load( file, onClick );
-
-        if ( onPhotoAddedListener != null )
-            onPhotoAddedListener.onPhotoAdded( this, file );
+        thumbnail.setOnClickListener( onClickThumbnailListener );
+        thumbnail.load( file );
     }
 
-    boolean removePhoto( @NonNull File file ) {
+    public boolean removePhoto( @NonNull File file ) {
         ArrayList<ThumbnailView> thumbnails = getThumbnailViews();
         ThumbnailView selection = null;
 
@@ -361,9 +278,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
                                 }
                             } ).start();
 
-            if ( onPhotoRemovedListener != null )
-                onPhotoRemovedListener.onPhotoRemoved( this, file );
-
             return true;
         }
     }
@@ -371,7 +285,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     private ImageButton addButton() {
         ImageButton button = (ImageButton) LayoutInflater.from( getContext() )
                         .inflate( R.layout.gallery_add_photo, this, false );
-        button.setOnClickListener( this );
         addView( button, getThumbnailWidth(), getThumbnailHeight() );
         return button;
     }
@@ -418,17 +331,5 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         } else {
             super.onRestoreInstanceState( state );
         }
-    }
-
-    public interface OnPhotoAddedListener {
-        void onPhotoAdded( GalleryView gallery, File photo );
-    }
-
-    public interface OnPhotoRemovedListener {
-        void onPhotoRemoved( GalleryView galley, File photo );
-    }
-
-    public interface OnPhotoErrorListener {
-        void onPhotoError( Throwable throwable );
     }
 }
