@@ -1,5 +1,6 @@
 package com.liefery.android.gallery;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -29,6 +30,12 @@ public class DetailActivity extends AppCompatActivity implements RequestListener
     private PhotoView image;
 
     private File file;
+
+    public static Intent newInstance( Context context, File file ) {
+        Intent intent = new Intent( context, DetailActivity.class );
+        intent.putExtra( "file", file.getAbsolutePath() );
+        return intent;
+    }
 
     @Override
     public void onCreate( @Nullable Bundle state ) {

@@ -67,12 +67,6 @@ public class GalleryView extends FlexboxLayout {
 
     private int thumbnailHeight;
 
-    private OnPhotoAddedListener onPhotoAddedListener;
-
-    private OnPhotoRemovedListener onPhotoRemovedListener;
-
-    private OnPhotoErrorListener onPhotoErrorListener;
-
     private OnClickListener onClickThumbnailListener;
 
     private ImageButton takePhotoButton;
@@ -140,39 +134,10 @@ public class GalleryView extends FlexboxLayout {
             thumbnailDefaultSize );
         setThumbnailHeight( thumbnailHeight );
 
-        FragmentManager fm = getFragmentManager( context );
-
-        PermissionAuxilery permissionAuxilery = (PermissionAuxilery) fm
-                        .findFragmentByTag( PermissionAuxilery.TAG );
-
-        if ( permissionAuxilery != null ) {
-            permissionAuxilery.setGalleryView( this );
-        }
-
-        //restorePhotoAuxilery();
-
         takePhotoButton = addButton();
 
         styles.recycle();
     }
-
-    //    private void restorePhotoAuxilery() {
-    //        FragmentManager fm = getFragmentManager( getContext() );
-    //
-    //        PhotoAuxilery photoAuxilery = (PhotoAuxilery) fm
-    //                        .findFragmentByTag( PhotoAuxilery.TAG + "-" + getId() );
-    //
-    //        if ( photoAuxilery != null ) {
-    //            photoAuxilery.setGalleryView( this );
-    //        }
-    //    }
-    //
-    //    @Override
-    //    public void setId( int id ) {
-    //        super.setId( id );
-    //
-    //        restorePhotoAuxilery();
-    //    }
 
     public void setThumbnailBackgroundColor( @ColorInt int color ) {
         this.thumbnailBackgroundColor = color;
@@ -210,36 +175,6 @@ public class GalleryView extends FlexboxLayout {
         return thumbnailHeight;
     }
 
-    //    @Override
-    //    public void onClick( View view ) {
-    //        takePhoto();
-    //    }
-    //
-    //    void takePhoto() {
-    //        Context context = getContext();
-    //        FragmentManager manager = getFragmentManager( context );
-    //
-    //        if ( !PermissionAuxilery.hasPermissions( context ) ) {
-    //            PermissionAuxilery permissionAuxilery = PermissionAuxilery
-    //                            .newInstance( this );
-    //            manager.beginTransaction()
-    //                            .add( permissionAuxilery, PermissionAuxilery.TAG )
-    //                            .commitNow();
-    //            return;
-    //        }
-    //
-    //        Intent intent = new Intent( context, PhotoAux2.class );
-    //        context.startActivity( intent );
-    //        //        PhotoAuxilery photoAuxiliary = PhotoAuxilery.newInstance( this );
-    //        //        manager.beginTransaction().add( photoAuxiliary, PhotoAuxilery.TAG )
-    //        //                        .commitNow();
-    //
-    //        //        Intent intent = new Intent(
-    //        //            context.getApplicationContext(),
-    //        //            ActionActivity.class );
-    //        //        photoAuxiliary.startActivityForResult( intent, 421 );
-    //    }
-
     @NonNull
     public ArrayList<File> getImages() {
         int count = getChildCount();
@@ -272,39 +207,10 @@ public class GalleryView extends FlexboxLayout {
         return paths;
     }
 
-    //    @Nullable
-    //    public OnPhotoAddedListener getOnPhotoAddedListener() {
-    //        return onPhotoAddedListener;
-    //    }
-
-    //    public void setOnPhotoAddedListener(
-    //        @Nullable OnPhotoAddedListener onPhotoAddedListener ) {
-    //        this.onPhotoAddedListener = onPhotoAddedListener;
-    //    }
-    //
-    //    @Nullable
-    //    public OnPhotoRemovedListener getOnPhotoRemovedListener() {
-    //        return onPhotoRemovedListener;
-    //    }
-    //
-    //    public void setOnPhotoRemovedListener(
-    //        @Nullable OnPhotoRemovedListener onPhotoRemovedListener ) {
-    //        this.onPhotoRemovedListener = onPhotoRemovedListener;
-    //    }
-    //
-    //    @Nullable
-    //    public OnPhotoErrorListener getOnPhotoErrorListener() {
-    //        return onPhotoErrorListener;
-    //    }
-    //
-    //    public void setOnPhotoErrorListener(
-    //        @Nullable OnPhotoErrorListener onPhotoErrorListener ) {
-    //        this.onPhotoErrorListener = onPhotoErrorListener;
-    //    }
-
     public void setOnClickTakePhotoListener(
         OnClickListener onClickTakePhotoListener ) {
-        this.takePhotoButton.setOnClickListener( onClickTakePhotoListener );
+        if ( takePhotoButton != null )
+            this.takePhotoButton.setOnClickListener( onClickTakePhotoListener );
     }
 
     public void setOnClickThumbnailListener(
@@ -340,33 +246,11 @@ public class GalleryView extends FlexboxLayout {
                             .setStartDelay( 250 ).setDuration( 350 ).start();
         }
 
-        final Context context = getContext();
-        final String path = file.getAbsolutePath();
-
         thumbnail.setOnClickListener( onClickThumbnailListener );
-        //        OnClickListener onClick = new OnClickListener() {
-        //            @Override
-        //            public void onClick( View view ) {
-        //                FragmentManager manager = getFragmentManager( context );
-        //
-        //                //                PhotoAuxilery auxiliary = PhotoAuxilery
-        //                //                                .newInstance( GalleryView.this );
-        //                //                manager.beginTransaction().add( auxiliary, PhotoAuxilery.TAG )
-        //                //                                .commitNow();
-        //
-        //                //                Intent intent = new Intent( context, DetailActivity.class )
-        //                //                                .putExtra( "file", path );
-        //                //                auxiliary.startActivityForResult( intent, 421 );
-        //            }
-        //        };
-
         thumbnail.load( file );
-
-        //        if ( onPhotoAddedListener != null )
-        //            onPhotoAddedListener.onPhotoAdded( this, file );
     }
 
-    boolean removePhoto( @NonNull File file ) {
+    public boolean removePhoto( @NonNull File file ) {
         ArrayList<ThumbnailView> thumbnails = getThumbnailViews();
         ThumbnailView selection = null;
 
@@ -394,9 +278,6 @@ public class GalleryView extends FlexboxLayout {
                                 }
                             } ).start();
 
-            if ( onPhotoRemovedListener != null )
-                onPhotoRemovedListener.onPhotoRemoved( this, file );
-
             return true;
         }
     }
@@ -404,7 +285,6 @@ public class GalleryView extends FlexboxLayout {
     private ImageButton addButton() {
         ImageButton button = (ImageButton) LayoutInflater.from( getContext() )
                         .inflate( R.layout.gallery_add_photo, this, false );
-        //button.setOnClickListener( getOnClickTakePhotoListener() );
         addView( button, getThumbnailWidth(), getThumbnailHeight() );
         return button;
     }
@@ -451,17 +331,5 @@ public class GalleryView extends FlexboxLayout {
         } else {
             super.onRestoreInstanceState( state );
         }
-    }
-
-    public interface OnPhotoAddedListener {
-        void onPhotoAdded( GalleryView gallery, File photo );
-    }
-
-    public interface OnPhotoRemovedListener {
-        void onPhotoRemoved( GalleryView galley, File photo );
-    }
-
-    public interface OnPhotoErrorListener {
-        void onPhotoError( Throwable throwable );
     }
 }
