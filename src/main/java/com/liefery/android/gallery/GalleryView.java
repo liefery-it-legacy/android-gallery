@@ -138,12 +138,12 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
 
         FragmentManager fm = getFragmentManager( context );
 
-        PermissionAuxilery permissionAuxilery = (PermissionAuxilery) fm
-                        .findFragmentByTag( PermissionAuxilery.TAG );
-
-        if ( permissionAuxilery != null ) {
-            permissionAuxilery.setGalleryView( this );
-        }
+        //        PermissionAuxilery permissionAuxilery = (PermissionAuxilery) fm
+        //                        .findFragmentByTag( PermissionAuxilery.TAG );
+        //
+        //        if ( permissionAuxilery != null ) {
+        //            permissionAuxilery.setGalleryView( this );
+        //        }
 
         PhotoAuxilery photoAuxilery = (PhotoAuxilery) fm
                         .findFragmentByTag( PhotoAuxilery.TAG );
@@ -202,14 +202,14 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         Context context = getContext();
         FragmentManager manager = getFragmentManager( context );
 
-        if ( !PermissionAuxilery.hasPermissions( context ) ) {
-            PermissionAuxilery permissionAuxilery = PermissionAuxilery
-                            .newInstance( this );
-            manager.beginTransaction()
-                            .add( permissionAuxilery, PermissionAuxilery.TAG )
-                            .commitNow();
-            return;
-        }
+        //        if ( !PermissionAuxilery.hasPermissions( context ) ) {
+        //            PermissionAuxilery permissionAuxilery = PermissionAuxilery
+        //                            .newInstance( this );
+        //            manager.beginTransaction()
+        //                            .add( permissionAuxilery, PermissionAuxilery.TAG )
+        //                            .commitNow();
+        //            return;
+        //        }
 
         PhotoAuxilery photoAuxiliary = PhotoAuxilery.newInstance( this );
         manager.beginTransaction().add( photoAuxiliary, PhotoAuxilery.TAG )
