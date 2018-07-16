@@ -207,15 +207,13 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
                             .newInstance( this );
             manager.beginTransaction()
                             .add( permissionAuxilery, PermissionAuxilery.TAG )
-                            .commit();
-            manager.executePendingTransactions();
+                            .commitNow();
             return;
         }
 
         PhotoAuxilery photoAuxiliary = PhotoAuxilery.newInstance( this );
         manager.beginTransaction().add( photoAuxiliary, PhotoAuxilery.TAG )
-                        .commit();
-        manager.executePendingTransactions();
+                        .commitNow();
 
         Intent intent = new Intent( context, ActionActivity.class );
         photoAuxiliary.startActivityForResult( intent, 421 );
@@ -318,8 +316,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
                 PhotoAuxilery auxiliary = PhotoAuxilery
                                 .newInstance( GalleryView.this );
                 manager.beginTransaction().add( auxiliary, PhotoAuxilery.TAG )
-                                .commit();
-                manager.executePendingTransactions();
+                                .commitNow();
 
                 Intent intent = new Intent( context, DetailActivity.class )
                                 .putExtra( "file", path );
