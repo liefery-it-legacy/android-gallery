@@ -1,5 +1,6 @@
 package com.liefery.android.gallery;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,13 +9,18 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 import pl.aprilapps.easyphotopicker.EasyImage;
 import pl.aprilapps.easyphotopicker.EasyImage.ImageSource;
 
 import java.io.*;
 import java.util.List;
 
+import static android.content.pm.PackageManager.PERMISSION_DENIED;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_180;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_270;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_90;
@@ -34,6 +40,53 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
         super.onCreate( state );
 
         if ( state == null ) {
+            checkPermissions();
+        }
+    }
+
+    private boolean hasPermissions() {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE ) == PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA ) == PERMISSION_GRANTED;
+    }
+
+    private void checkPermissions() {
+        if ( !hasPermissions() ) {
+            ActivityCompat.requestPermissions( this, new String[] {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA }, 420 );
+        } else {
+            EasyImage.openCameraForImage( this, 0 ); //
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+        int request,
+        @NonNull String[] permissions,
+        @NonNull int[] results ) {
+        super.onRequestPermissionsResult( request, permissions, results );
+
+        if ( request != 420 ) {
+            Log.w( TAG, "Unexpected request code " + request );
+            return;
+        }
+
+        if ( results.length != 2 ) {
+            Log.w( TAG, "Unexpected permission results" );
+            return;
+        }
+
+        if ( results[0] == PERMISSION_DENIED || results[1] == PERMISSION_DENIED ) {
+            Toast.makeText(
+                this,
+                "Accept permission to take a photo",
+                Toast.LENGTH_LONG ).show();
+            finish();
+        } else {
             EasyImage.openCameraForImage( this, 0 );
         }
     }

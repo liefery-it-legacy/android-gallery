@@ -137,14 +137,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         setThumbnailHeight( thumbnailHeight );
 
         FragmentManager fm = getFragmentManager( context );
-
-        PermissionAuxilery permissionAuxilery = (PermissionAuxilery) fm
-                        .findFragmentByTag( PermissionAuxilery.TAG );
-
-        if ( permissionAuxilery != null ) {
-            permissionAuxilery.setGalleryView( this );
-        }
-
         PhotoAuxilery photoAuxilery = (PhotoAuxilery) fm
                         .findFragmentByTag( PhotoAuxilery.TAG );
 
@@ -201,15 +193,6 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     void takePhoto() {
         Context context = getContext();
         FragmentManager manager = getFragmentManager( context );
-
-        if ( !PermissionAuxilery.hasPermissions( context ) ) {
-            PermissionAuxilery permissionAuxilery = PermissionAuxilery
-                            .newInstance( this );
-            manager.beginTransaction()
-                            .add( permissionAuxilery, PermissionAuxilery.TAG )
-                            .commitNow();
-            return;
-        }
 
         PhotoAuxilery photoAuxiliary = PhotoAuxilery.newInstance( this );
         manager.beginTransaction().add( photoAuxiliary, PhotoAuxilery.TAG )
