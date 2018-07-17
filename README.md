@@ -13,7 +13,7 @@
 ```scala
 resolvers += "jitpack" at "https://jitpack.io"
 
-libraryDependencies += "com.github.liefery" % "android-gallery" % "1.5.3"
+libraryDependencies += "com.github.liefery" % "android-gallery" % "[version]"
 ```
 
 ### Gradle
@@ -27,6 +27,6 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.liefery:android-gallery:1.5.3'
+    compile 'com.github.liefery:android-gallery:[version]'
 }
 ```

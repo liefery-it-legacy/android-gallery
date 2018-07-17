@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.4
+
+_2018-07-17_
+
+ * Request permissions in `ActionActivity` rather than an Aux Fragment
+
 ## 1.5.3
 
 _2018-07-11_
