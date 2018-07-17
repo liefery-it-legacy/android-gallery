@@ -2,7 +2,6 @@ package com.liefery.android.gallery;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,8 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,7 +26,6 @@ import static android.media.ExifInterface.ORIENTATION_ROTATE_270;
 import static android.media.ExifInterface.ORIENTATION_ROTATE_90;
 import static com.liefery.android.gallery.GalleryView.*;
 
-// make this ActionActivity to be "invisible"
 public class ActionActivity extends Activity implements EasyImage.Callbacks {
     public static final String TAG = ActionActivity.class.getCanonicalName();
 
@@ -39,25 +35,12 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
         options.inSampleSize = 2;
     }
 
-    //added:
-    //    @NonNull
-    //    private static FragmentManager getFragmentManager( Context context ) {
-    //        if ( context instanceof Activity ) {
-    //            return ( (FragmentActivity) context ).getSupportFragmentManager();
-    //        } else {
-    //            throw new IllegalStateException( "Not a valid host" );
-    //        }
-    //    }
-
     @Override
     public void onCreate( @Nullable Bundle state ) {
         super.onCreate( state );
 
         if ( state == null ) {
-
             checkPermissions();
-
-            //            EasyImage.openCameraForImage( this, 0 );
         }
     }
 
@@ -72,24 +55,13 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
 
     private void checkPermissions() {
         if ( !hasPermissions() ) {
-
-            //            this is a method of a Fragment...
-            //            can you get it for Activity as well?
-            //            ActivityCompat.requestPermissions();
-
-            //            requestPermissions( new String[] {
-            //                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            //                Manifest.permission.CAMERA }, 420 );
-
             ActivityCompat.requestPermissions( this, new String[] {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA }, 420 );
-
         } else {
-            //            galleryView.takePhoto();
             EasyImage.openCameraForImage( this, 0 ); //
-            //            destroy();
         }
+        finish();
     }
 
     @Override
@@ -115,11 +87,8 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
                 "Accept permission to take a photo",
                 Toast.LENGTH_LONG ).show();
         } else {
-            //            galleryView.takePhoto();
             EasyImage.openCameraForImage( this, 0 );
         }
-
-        //        destroy();
     }
 
     @Override

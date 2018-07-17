@@ -79,7 +79,4 @@ public class PhotoAuxilery extends Fragment {
 
         galleryView = null;
     }
-
-    //    FROM PERMISSION AUXILLARY:
-
 }
