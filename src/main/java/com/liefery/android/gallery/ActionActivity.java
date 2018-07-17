@@ -61,7 +61,6 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
         } else {
             EasyImage.openCameraForImage( this, 0 ); //
         }
-        finish();
     }
 
     @Override
@@ -86,6 +85,7 @@ public class ActionActivity extends Activity implements EasyImage.Callbacks {
                 this,
                 "Accept permission to take a photo",
                 Toast.LENGTH_LONG ).show();
+            finish();
         } else {
             EasyImage.openCameraForImage( this, 0 );
         }
