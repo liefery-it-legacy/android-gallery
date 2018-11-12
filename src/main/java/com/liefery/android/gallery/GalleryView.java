@@ -26,6 +26,7 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.android.flexbox.AlignContent.FLEX_START;
 import static com.google.android.flexbox.FlexWrap.WRAP;
@@ -72,6 +73,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     private OnPhotoRemovedListener onPhotoRemovedListener;
 
     private OnPhotoErrorListener onPhotoErrorListener;
+
+    private List<File> deletedPhotos = new ArrayList<>();
 
     public GalleryView( Context context ) {
         super( context );
@@ -210,7 +213,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         for ( int i = 0; i < count - 1; i++ ) {
             File file = ( (ThumbnailView) getChildAt( i ) ).getFile();
 
-            if ( file != null ) {
+            if ( file != null && !deletedPhotos.contains( file ) ) {
                 files.add( file );
             }
         }
@@ -226,7 +229,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         for ( int i = 0; i < count - 1; i++ ) {
             File file = ( (ThumbnailView) getChildAt( i ) ).getFile();
 
-            if ( file != null ) {
+            if ( file != null && !deletedPhotos.contains( file ) ) {
                 paths.add( file.getAbsolutePath() );
             }
         }
@@ -331,6 +334,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
             return false;
         } else {
             final ThumbnailView finalSelection = selection;
+            deletedPhotos.add( finalSelection.getFile() );
 
             ViewCompat.animate( selection ).scaleX( 0 ).scaleY( 0 ).alpha( 0 )
                             .setStartDelay( 250 ).setDuration( 250 )
