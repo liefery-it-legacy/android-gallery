@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.5
+
+_2018-11-12_
+
+ * Don't include deleted photos in getImages and getPaths
+
 ## 1.5.4
 
 _2018-07-17_
