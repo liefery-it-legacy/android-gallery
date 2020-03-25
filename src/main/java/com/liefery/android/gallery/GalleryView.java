@@ -157,7 +157,7 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     }
 
     public void setMaxPhotos( int maxPhotos ) {
-        this.maxPhotos = Math.max(1, maxPhotos);
+        this.maxPhotos = Math.max( 1, maxPhotos );
         updateButtonVisibility();
     }
 
@@ -375,7 +375,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
 
     private void updateButtonVisibility() {
         if ( addPhotoButton != null )
-            addPhotoButton.setVisibility( getImages().size() >= maxPhotos ? View.GONE : View.VISIBLE );
+            addPhotoButton.setVisibility( getImages().size() >= maxPhotos ? View.GONE
+                            : View.VISIBLE );
     }
 
     @NonNull
