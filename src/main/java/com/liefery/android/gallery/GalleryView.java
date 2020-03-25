@@ -62,6 +62,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         }
     }
 
+    private int maxPhotos = Integer.MAX_VALUE;
+
     private int thumbnailBackgroundColor;
 
     private int thumbnailWidth;
@@ -75,6 +77,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     private OnPhotoErrorListener onPhotoErrorListener;
 
     private List<File> deletedPhotos = new ArrayList<>();
+
+    private ImageButton addPhotoButton;
 
     public GalleryView( Context context ) {
         super( context );
@@ -147,9 +151,18 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
             photoAuxilery.setGalleryView( this );
         }
 
-        addButton();
+        addPhotoButton = addButton();
 
         styles.recycle();
+    }
+
+    public void setMaxPhotos( int maxPhotos ) {
+        this.maxPhotos = maxPhotos;
+
+        if ( addPhotoButton != null && getImages().size() >= maxPhotos )
+            addPhotoButton.setVisibility( View.GONE );
+        else if ( addPhotoButton != null )
+            addPhotoButton.setVisibility( View.VISIBLE );
     }
 
     public void setThumbnailBackgroundColor( @ColorInt int color ) {
@@ -314,6 +327,9 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
 
         if ( onPhotoAddedListener != null )
             onPhotoAddedListener.onPhotoAdded( this, file );
+
+        if ( addPhotoButton != null && getImages().size() >= maxPhotos )
+            addPhotoButton.setVisibility( View.GONE );
     }
 
     boolean removePhoto( @NonNull File file ) {
@@ -347,6 +363,9 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
 
             if ( onPhotoRemovedListener != null )
                 onPhotoRemovedListener.onPhotoRemoved( this, file );
+
+            if ( addPhotoButton != null && getImages().size() < maxPhotos )
+                addPhotoButton.setVisibility( View.VISIBLE );
 
             return true;
         }
