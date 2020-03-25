@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.6
+
+__2020-03-26__
+
+ * Allow setting maximum amount of photos via `setMaxPhotos(int)`
+
 ## 1.5.5
 
 _2018-11-12_

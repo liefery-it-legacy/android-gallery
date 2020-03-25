@@ -62,6 +62,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         }
     }
 
+    private int maxPhotos = Integer.MAX_VALUE;
+
     private int thumbnailBackgroundColor;
 
     private int thumbnailWidth;
@@ -75,6 +77,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
     private OnPhotoErrorListener onPhotoErrorListener;
 
     private List<File> deletedPhotos = new ArrayList<>();
+
+    private ImageButton addPhotoButton;
 
     public GalleryView( Context context ) {
         super( context );
@@ -147,9 +151,14 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
             photoAuxilery.setGalleryView( this );
         }
 
-        addButton();
+        addPhotoButton = addButton();
 
         styles.recycle();
+    }
+
+    public void setMaxPhotos( int maxPhotos ) {
+        this.maxPhotos = Math.max(1, maxPhotos);
+        updateButtonVisibility();
     }
 
     public void setThumbnailBackgroundColor( @ColorInt int color ) {
@@ -314,6 +323,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
 
         if ( onPhotoAddedListener != null )
             onPhotoAddedListener.onPhotoAdded( this, file );
+
+        updateButtonVisibility();
     }
 
     boolean removePhoto( @NonNull File file ) {
@@ -348,6 +359,8 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
             if ( onPhotoRemovedListener != null )
                 onPhotoRemovedListener.onPhotoRemoved( this, file );
 
+            updateButtonVisibility();
+
             return true;
         }
     }
@@ -358,6 +371,11 @@ public class GalleryView extends FlexboxLayout implements OnClickListener {
         button.setOnClickListener( this );
         addView( button, getThumbnailWidth(), getThumbnailHeight() );
         return button;
+    }
+
+    private void updateButtonVisibility() {
+        if ( addPhotoButton != null )
+            addPhotoButton.setVisibility( getImages().size() >= maxPhotos ? View.GONE : View.VISIBLE );
     }
 
     @NonNull
